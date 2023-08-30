@@ -11,7 +11,7 @@ class UserOperation:
     def encrypt_password(self, user_password):
         """
         Method to encode a user-provided p/w
-        :param: user_password: user provided p/w str
+        :param user_password: user provided p/w str
         :return: returns encrypted p/w str
         """
         pass
@@ -37,7 +37,7 @@ class UserOperation:
         """
         Validate the user p/w, which should contain:
         x1 (upper/lowercase), & x1 no; p/w len must be >= 5 char
-        :param: user_password: user provided p/w str
+        :param user_password: user provided p/w str
         :return: returns bool to determine if provided p/w is valid
         """
         pass

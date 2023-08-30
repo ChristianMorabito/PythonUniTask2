@@ -62,3 +62,4 @@ class CustomerOperation:
         Method to remove all customers from the data/users.txt file
         :return: None
         """
+        pass

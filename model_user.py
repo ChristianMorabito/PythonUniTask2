@@ -7,7 +7,8 @@ class User:
                  user_name="empty_name",
                  user_password="empty_password",
                  user_register_time="00-00-0000_00:00:00",
-                 user_role="customer"):
+                 user_role="customer"
+                 ):
 
         self.user_id = user_id
         self.user_name = user_name
@@ -15,5 +16,10 @@ class User:
         self.user_register_time = user_register_time
         self.user_role = user_role
 
-    def __str__(self):  # TODO: complete __str__ method
-        return f""
+    def __str__(self):
+        return f"user_id: {self.user_id}\n" \
+               f"user_name: {self.user_name}\n" \
+               f"user_password: {self.user_password}\n" \
+               f"user_register_time: {self.user_register_time}\n" \
+               f"user_role: {self.user_role}"
+

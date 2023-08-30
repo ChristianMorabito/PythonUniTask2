@@ -1,3 +1,5 @@
+from io_interface import IOInterface
+
 
 def login_control():
     pass
@@ -12,7 +14,7 @@ def admin_control():
 
 
 def main():
-    pass
+    IOInterface.main_menu()
 
 
 if __name__ == '__main__':

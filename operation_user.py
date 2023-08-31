@@ -1,6 +1,9 @@
+import re
+
 class UserOperation:
 
-    def generate_unique_user_id(self):
+    @staticmethod
+    def generate_unique_user_id():
         """
         Method to generate & return a 10-digit unique userId
         starting with ‘u_’ when new user is registered.
@@ -8,7 +11,8 @@ class UserOperation:
         """
         pass
 
-    def encrypt_password(self, user_password):
+    @staticmethod
+    def encrypt_password(user_password):
         """
         Method to encode a user-provided p/w
         :param user_password: user provided p/w str
@@ -16,7 +20,8 @@ class UserOperation:
         """
         pass
 
-    def check_username_exist(self, user_name):
+    @staticmethod
+    def check_username_exist(user_name):
         """
         Method to verify if user exists in the system.
         :param user_name: user provided user_name str
@@ -24,16 +29,18 @@ class UserOperation:
         """
         pass
 
-    def validate_username(self, user_name):
+    @staticmethod
+    def validate_username(user_name):
         """
         Method to validate user_name, to only contain
         letters & underscores, w/ len >= 5 chars.
         :param user_name: user provided user_name str
         :return: returns bool to determine if provided user_name is valid
         """
-        pass
+        return re.match(r'^[a-zA-Z_]+$', user_name) and len(user_name) >= 5
 
-    def validate_password(self, user_password):
+    @staticmethod
+    def validate_password(user_password):
         """
         Validate the user p/w, which should contain:
         x1 (upper/lowercase), & x1 no; p/w len must be >= 5 char
@@ -42,7 +49,8 @@ class UserOperation:
         """
         pass
 
-    def login(self, user_name, user_password):
+    @staticmethod
+    def login(user_name, user_password):
         """
         Method to verify user_name & p/w
         to determine the authorization status for sys access.

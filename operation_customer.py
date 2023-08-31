@@ -1,6 +1,7 @@
 class CustomerOperation:
 
-    def validate_email(self, user_email):
+    @staticmethod
+    def validate_email(user_email):
         """
         Method to validate user_email
         :param user_email: user provided email str
@@ -8,7 +9,8 @@ class CustomerOperation:
         """
         pass
 
-    def validate_mobile(self, user_mobile):
+    @staticmethod
+    def validate_mobile(user_mobile):
         """
         Method to validate user_mobile
         :param user_mobile: user provided mobile int
@@ -16,7 +18,8 @@ class CustomerOperation:
         """
         pass
 
-    def register_customer(self, user_name, user_password, user_email, user_mobile):
+    @staticmethod
+    def register_customer(user_name, user_password, user_email, user_mobile):
         """
         Method to save the info. of the new customer into the
         data/users.txt file
@@ -27,9 +30,10 @@ class CustomerOperation:
         :return: returns bool depending on validation
                  to ensure all input values are valid
         """
-        pass
+        print(user_name, user_password, user_email, user_mobile)
 
-    def update_profile(self, attribute_name, value, customer_object):
+    @staticmethod
+    def update_profile(attribute_name, value, customer_object):
         """
         Method to update the given customer object’s attribute value
         :param attribute_name: accepts str for attribute name
@@ -40,7 +44,8 @@ class CustomerOperation:
         """
         pass
 
-    def delete_customer(self, customer_id):
+    @staticmethod
+    def delete_customer(customer_id):
         """
         method to delete the customer from data/users.txt file based on the
         provided customer_id
@@ -49,7 +54,8 @@ class CustomerOperation:
         """
         pass
 
-    def get_customer_list(self, page_number):
+    @staticmethod
+    def get_customer_list(page_number):
         """
         method to retrieve 1 page of customers from data/users.txt
         :param page_number: accepts page_number int
@@ -57,7 +63,8 @@ class CustomerOperation:
         """
         pass
 
-    def delete_all_customers(self):
+    @staticmethod
+    def delete_all_customers():
         """
         Method to remove all customers from the data/users.txt file
         :return: None

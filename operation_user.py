@@ -1,4 +1,6 @@
+import os
 import re
+
 
 class UserOperation:
 
@@ -9,7 +11,9 @@ class UserOperation:
         starting with ‘u_’ when new user is registered.
         :return: returns str value in the format 'u_10digits'
         """
-        pass
+        if os.path.getsize("data/users.txt") == 0:
+            return "u_0000000000"
+        return "test"
 
     @staticmethod
     def encrypt_password(user_password):
@@ -47,7 +51,15 @@ class UserOperation:
         :param user_password: user provided p/w str
         :return: returns bool to determine if provided p/w is valid
         """
-        pass
+        if len(user_password) < 5:
+            return False
+        has_letter = has_int = False
+        for char in user_password:
+            if not has_letter:
+                has_letter = True if char.isalpha() else False
+            if not has_int:
+                has_int = True if char.isdigit() else False
+        return has_letter and has_int
 
     @staticmethod
     def login(user_name, user_password):

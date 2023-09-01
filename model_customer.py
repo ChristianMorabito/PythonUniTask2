@@ -19,10 +19,10 @@ class Customer(User):
         self.user_mobile = user_mobile
 
     def __str__(self):
-        return f"user_id: {self.user_id}\n" \
-               f"user_name: {self.user_name}\n" \
-               f"user_password: {self.user_password}\n" \
-               f"user_register_time: {self.user_register_time}\n" \
-               f"user_role: {self.user_role}" \
-               f"user_email: {self.user_email}\n" \
-               f"user_mobile: {self.user_mobile}"
+        return (f"user_id: {self.user_id}\n"
+                f"user_name: {self.user_name}\n"
+                f"user_password: {self.user_password}\n"
+                f"user_register_time: {self.user_register_time}\n"
+                f"user_role: {self.user_role}\n"
+                f"user_email: {self.user_email}\n"
+                f"user_mobile: {self.user_mobile}\n")

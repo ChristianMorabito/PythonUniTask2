@@ -14,10 +14,7 @@ class IOInterface:
 
     @staticmethod
     def main_menu():
-        """
-        method displays login menu, i.e. login, register & quit
-        :return: None
-        """
+        """ method displays login menu, i.e. login, register & quit """
         print("(1) Login\n"
               "(2) Register\n"
               "(3) Quit")
@@ -53,6 +50,35 @@ class IOInterface:
               "(6) Logout")
 
     @staticmethod
+    def register_requirement():
+        """ method displays requirements for user registration"""
+        print("Registration requires:\n"
+              "\t\t• username\n"
+              "\t\t• password\n"
+              "\t\t• email address\n"
+              "\t\t• mobile number\n")
+
+    @staticmethod
+    def register_username():
+        """ method displays requirement to pass username validation """
+        print("USERNAME: should only contain letters or underscores. Length should be at least 5 characters.")
+
+    @staticmethod
+    def register_password():
+        """ method displays requirement to pass password validation """
+        print("PASSWORD: should contain at least 1 letter & 1 number. Length should be at least 5 characters.")
+
+    @staticmethod
+    def register_email():
+        """ method displays requirement to pass email address validation """
+        print("EMAIL: must contain username, @ symbol, domain name, & dot.")
+
+    @staticmethod
+    def register_mobile():
+        """ method displays requirement to pass email mobile validation """
+        print("MOBILE: must be exactly 10 digits, only numbers & starting with either 04 or 03.")
+
+    @staticmethod
     def show_list(user_role, list_type, object_list):
         """
         method prints diff. types of list, i.e. customer, product, or order.
@@ -71,7 +97,7 @@ class IOInterface:
         :param error_message: accepts error_message str
         :return: None
         """
-        print(error_message, f"\t -> source: {error_source}\n")
+        print(error_message, f"\t # ERROR_SOURCE → {error_source}\n")
 
     @staticmethod
     def print_message(message):

@@ -1,36 +1,85 @@
+import re
+import time
+from model_customer import Customer
+from operation_user import UserOperation
+
+
 class CustomerOperation:
+
 
     @staticmethod
     def validate_email(user_email):
         """
-        Method to validate user_email
         :param user_email: user provided email str
         :return: returns bool depending on validation
         """
-        pass
+        user_email = user_email.strip()
+        if len(user_email) < 4:  # shortest email can only be: a@b.
+            return False
+        i = 0
+        check_name = ""
+        while i < len(user_email) and user_email[i] != "@":
+            if i == 0 and not user_email[i].isalpha():  # checks if first letter in email address is an alphabet char.
+                return False
+            check_name += user_email[i]
+            i += 1
+
+        if not re.match(r'^[a-zA-Z0-9_.]+$', check_name) or i < len(user_email) and user_email[i] != "@":
+            return False
+
+        i += 1
+        if i == len(user_email):
+            return False
+
+        check_domain = ""
+        while i < len(user_email) and user_email[i] != ".":
+            if user_email[i-1] == "@" and not user_email[i].isalpha():
+                return False
+            check_domain += user_email[i]
+            i += 1
+
+        if not re.match(r'^[a-zA-Z0-9_.]+$', check_domain) or i < len(user_email) and user_email[i] != ".":
+            return False
+
+        return True
+
 
     @staticmethod
-    def validate_mobile(user_mobile):
+    def validate_mobile(mobile):
+        mobile = mobile.strip()
         """
         Method to validate user_mobile
         :param user_mobile: user provided mobile int
         :return: returns bool depending on validation
         """
-        pass
+        return len(mobile) == 10 and re.match(r'^[0-9]+$', mobile) and mobile[:2] == "04" or mobile[:2] == "03"
 
     @staticmethod
     def register_customer(user_name, user_password, user_email, user_mobile):
         """
-        Method to save the info. of the new customer into the
-        data/users.txt file
+        Method to save the info. of the new customer into the data/users.txt file
         :param user_name: user provided name str
         :param user_password: user provided p/w str
         :param user_email: user provided email str
         :param user_mobile: user provided mobile int
-        :return: returns bool depending on validation
-                 to ensure all input values are valid
+        :return: returns bool depending on validation to ensure all input values are valid
         """
-        print(user_name, user_password, user_email, user_mobile)
+        try:
+            with open("data/users.txt", "a") as file:
+                user_id = UserOperation.generate_unique_user_id()
+                user_time = time.strftime("%d-%m-%Y_%H:%M:%S")
+                file.write(Customer(
+                    user_id, user_name, user_password, user_time,
+                    user_email=user_email, user_mobile=user_mobile).__str__())
+                file.write("\n")
+        except FileNotFoundError:
+            return False
+
+        return True
+
+
+
+
 
     @staticmethod
     def update_profile(attribute_name, value, customer_object):

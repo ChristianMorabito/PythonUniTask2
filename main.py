@@ -4,11 +4,14 @@ from operation_user import UserOperation
 from operation_order import OrderOperation
 from operation_product import ProductOperation
 
+E_SHOP = True
+
 
 def login_control():
+    global E_SHOP
     while True:  # receive & validate input for: login/register/quit
         try:
-            choice = int(IOInterface.get_user_input("Enter 1, 2 or 3: ", num_of_args=1)[0])  # returns str @ 0th index
+            choice = int(IOInterface.get_user_input("Enter 1, 2 or 3: ", num_of_args=1)[0])  # returns int
             if 0 < choice < 4:
                 IOInterface.print_message(
                     "\n__LOGIN__\n" if choice == 1 else "\n__REGISTER__\n" if choice == 2 else "Quitting...")
@@ -23,27 +26,35 @@ def login_control():
         UserOperation.login(user_name, user_password)
     elif choice == 2:  # user registers as new customer
         customer_control()
+    else:
+        E_SHOP = False
 
 
 def customer_control():
-    reg = {
-        "username": ["", UserOperation.validate_username],
-        "password": ["", UserOperation.validate_password],
-        "email address": ["", CustomerOperation.validate_email],
-        "mobile number": ["", CustomerOperation.validate_mobile]
+    reg = {  # the value in dict is a list w/ x3 items:
+                  # 1) an empty string to accept user input & 2) display function to show user input requirements
+                  # 3) corresponding validation function to check input
+             "username": ["", IOInterface.register_username, UserOperation.validate_username],
+             "password": ["", IOInterface.register_password, UserOperation.validate_password],
+             "email address": ["", IOInterface.register_email, CustomerOperation.validate_email],
+             "mobile number": ["", IOInterface.register_mobile, CustomerOperation.validate_mobile]
     }
-    IOInterface.print_message("Customer registration requires:"
-                              "\n\t\tuser-name, password, email address, & mobile number.\n")
-    for area in reg:
+    IOInterface.register_requirement()
+    for area in reg:  # 'area' is a str: e.g: 'username', [...], 'mobile'
         while True:
-            reg[area][0] = IOInterface.get_user_input(f"Enter {area}: ", num_of_args=1)[0]  # returns str @ 0th index
-            if reg[area][1](reg[area][0]):  # reg[area][1] is the function, & reg[area][0] is the str. arg.
+            display_requirement, validation = reg[area][1], reg[area][2]
+            display_requirement()
+            reg[area][0] = IOInterface.get_user_input(f"Enter {area}: ", num_of_args=1)[0]  # returns string
+            if validation(reg[area][0]):
                 break
-            IOInterface.print_error_message(f"{reg[area][1].__module__}.{reg[area][1].__name__}()",
-                                            f"INVALID: {area} did not meet login requirements")
+            IOInterface.print_error_message(f"{validation.__module__}.{validation.__name__}()",
+                                            f"\nINVALID: {area} did not meet requirement. Please try again.")
 
-
-    CustomerOperation.register_customer(reg["username"], reg["password"], reg["email address"], reg["mobile number"])
+    if UserOperation.check_username_exist(reg["username"][0]):
+        IOInterface.print_error_message("main.customer_control()", "Username already exists!")
+    else:
+        CustomerOperation.register_customer(
+            reg["username"][0], reg["password"][0], reg["email address"][0], reg["mobile number"][0])
 
 
 
@@ -52,8 +63,9 @@ def admin_control():
 
 
 def main():
-    IOInterface.main_menu()
-    login_control()
+    while E_SHOP:
+        IOInterface.main_menu()
+        login_control()
 
 
 if __name__ == '__main__':

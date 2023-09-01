@@ -13,7 +13,7 @@ class UserOperation:
         """
         if os.path.getsize("data/users.txt") == 0:
             return "u_0000000000"
-        return "test"
+        return "test"  #TODO: FIX THIS
 
     @staticmethod
     def encrypt_password(user_password):

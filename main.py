@@ -6,7 +6,7 @@ from operation_product import ProductOperation
 
 E_SHOP = True
 
-
+# TODO: GENERATE USER ID NUMBER SO IT INCREMENTS
 def login_control():
     global E_SHOP
     while True:  # receive & validate input for: login/register/quit

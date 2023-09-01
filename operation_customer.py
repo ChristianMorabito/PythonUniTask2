@@ -64,7 +64,7 @@ class CustomerOperation:
         :param user_mobile: user provided mobile int
         :return: returns bool depending on validation to ensure all input values are valid
         """
-        try:
+        try:  #TODO: FIX GENERATE USER_ID_NUMBER
             with open("data/users.txt", "a") as file:
                 user_id = UserOperation.generate_unique_user_id()
                 user_time = time.strftime("%d-%m-%Y_%H:%M:%S")

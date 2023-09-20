@@ -4,11 +4,11 @@ from operation_user import UserOperation
 from operation_order import OrderOperation
 from operation_product import ProductOperation
 
-E_SHOP = True
+MAIN_LOOP = True
 
-# TODO: GENERATE USER ID NUMBER SO IT INCREMENTS
+
 def login_control():
-    global E_SHOP
+    global MAIN_LOOP
     while True:  # receive & validate input for: login/register/quit
         try:
             choice = int(IOInterface.get_user_input("Enter 1, 2 or 3: ", num_of_args=1)[0])  # returns int
@@ -27,13 +27,13 @@ def login_control():
     elif choice == 2:  # user registers as new customer
         customer_control()
     else:
-        E_SHOP = False
+        MAIN_LOOP = False
 
 
 def customer_control():
     reg = {  # the value in dict is a list w/ x3 items:
-                  # 1) an empty string to accept user input & 2) display function to show user input requirements
-                  # 3) corresponding validation function to check input
+             # 1) an empty string to accept user input & 2) display function to show user input requirements
+             # 3) corresponding validation function to check input
              "username": ["", IOInterface.register_username, UserOperation.validate_username],
              "password": ["", IOInterface.register_password, UserOperation.validate_password],
              "email address": ["", IOInterface.register_email, CustomerOperation.validate_email],
@@ -57,13 +57,12 @@ def customer_control():
             reg["username"][0], reg["password"][0], reg["email address"][0], reg["mobile number"][0])
 
 
-
 def admin_control():
     pass
 
 
 def main():
-    while E_SHOP:
+    while MAIN_LOOP:
         IOInterface.main_menu()
         login_control()
 

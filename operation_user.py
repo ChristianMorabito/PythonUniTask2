@@ -13,7 +13,17 @@ class UserOperation:
         """
         if os.path.getsize("data/users.txt") == 0:
             return "u_0000000000"
-        return "test"  #TODO: FIX THIS
+
+        # try:
+        #     with open("data/users.txt", "r") as file:
+        #
+        #         for line in list(file)
+        #
+        #
+        # except FileNotFoundError or OSError:
+        #     return "-1"
+        # return "test"
+
 
     @staticmethod
     def encrypt_password(user_password):

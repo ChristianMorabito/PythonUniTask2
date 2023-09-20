@@ -64,9 +64,11 @@ class CustomerOperation:
         :param user_mobile: user provided mobile int
         :return: returns bool depending on validation to ensure all input values are valid
         """
-        try:  #TODO: FIX GENERATE USER_ID_NUMBER
+        try:
             with open("data/users.txt", "a") as file:
                 user_id = UserOperation.generate_unique_user_id()
+                if user_id == "-1":
+                    return False
                 user_time = time.strftime("%d-%m-%Y_%H:%M:%S")
                 file.write(Customer(
                     user_id, user_name, user_password, user_time,

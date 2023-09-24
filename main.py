@@ -1,8 +1,6 @@
 from io_interface import IOInterface
 from operation_customer import CustomerOperation
 from operation_user import UserOperation
-from operation_order import OrderOperation
-from operation_product import ProductOperation
 
 MAIN_LOOP = True
 
@@ -32,12 +30,12 @@ def login_control():
 
 def customer_control():
     reg = {  # the value in dict is a list w/ x3 items:
-             # 1) an empty string to accept user input & 2) display function to show user input requirements
-             # 3) corresponding validation function to check input
-             "username": ["", IOInterface.register_username, UserOperation.validate_username],
-             "password": ["", IOInterface.register_password, UserOperation.validate_password],
-             "email address": ["", IOInterface.register_email, CustomerOperation.validate_email],
-             "mobile number": ["", IOInterface.register_mobile, CustomerOperation.validate_mobile]
+        # 1) an empty string to accept user input & 2) display function to show user input requirements
+        # 3) corresponding validation function to check input
+        "username": ["", IOInterface.register_username, UserOperation.validate_username],
+        "password": ["", IOInterface.register_password, UserOperation.validate_password],
+        "email address": ["", IOInterface.register_email, CustomerOperation.validate_email],
+        "mobile number": ["", IOInterface.register_mobile, CustomerOperation.validate_mobile]
     }
     IOInterface.register_requirement()
     for area in reg:  # 'area' is a str: e.g: 'username', [...], 'mobile'
@@ -53,8 +51,11 @@ def customer_control():
     if UserOperation.check_username_exist(reg["username"][0]):
         IOInterface.print_error_message("main.customer_control()", "Username already exists!")
     else:
-        CustomerOperation.register_customer(
-            reg["username"][0], reg["password"][0], reg["email address"][0], reg["mobile number"][0])
+        if not CustomerOperation.register_customer(
+                reg["username"][0], reg["password"][0], reg["email address"][0], reg["mobile number"][0]):
+            IOInterface.print_error_message(
+                "operation_user.generate_unique_user_id()",
+                f"\nFileNotFound or OS error")
 
 
 def admin_control():

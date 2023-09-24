@@ -6,7 +6,6 @@ from operation_user import UserOperation
 
 class CustomerOperation:
 
-
     @staticmethod
     def validate_email(user_email):
         """
@@ -43,7 +42,6 @@ class CustomerOperation:
 
         return True
 
-
     @staticmethod
     def validate_mobile(mobile):
         mobile = mobile.strip()
@@ -69,19 +67,17 @@ class CustomerOperation:
                 user_id = UserOperation.generate_unique_user_id()
                 if user_id == "-1":
                     return False
+
                 user_time = time.strftime("%d-%m-%Y_%H:%M:%S")
                 file.write(Customer(
                     user_id, user_name, user_password, user_time,
                     user_email=user_email, user_mobile=user_mobile).__str__())
                 file.write("\n")
-        except FileNotFoundError:
+
+        except FileNotFoundError or OSError:
             return False
 
         return True
-
-
-
-
 
     @staticmethod
     def update_profile(attribute_name, value, customer_object):

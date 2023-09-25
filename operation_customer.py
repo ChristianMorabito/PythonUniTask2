@@ -1,5 +1,7 @@
 import re
 import time
+
+import operation_user
 from model_customer import Customer
 from operation_user import UserOperation
 
@@ -69,8 +71,9 @@ class CustomerOperation:
                     return False
 
                 user_time = time.strftime("%d-%m-%Y_%H:%M:%S")
+                encrypted_pw = UserOperation.encrypt_password(user_password)
                 file.write(Customer(
-                    user_id, user_name, user_password, user_time,
+                    user_id, user_name, encrypted_pw, user_time,
                     user_email=user_email, user_mobile=user_mobile).__str__())
                 file.write("\n")
 

@@ -15,9 +15,10 @@ class IOInterface:
     @staticmethod
     def main_menu():
         """ method displays login menu, i.e. login, register & quit """
-        print("(1) Login\n"
+        print("__MAIN MENU__\n\n"
+              "(1) Login\n"
               "(2) Register\n"
-              "(3) Quit")
+              "(3) Quit\n")
 
     @staticmethod
     def admin_menu():
@@ -77,6 +78,16 @@ class IOInterface:
     def register_mobile():
         """ method displays requirement to pass email mobile validation """
         print("MOBILE: must be exactly 10 digits, only numbers & starting with either 04 or 03.")
+
+    @staticmethod
+    def go_to_menu():
+        """ method that displays command option for user to go back"""
+        print("__type 'menu' to go back to the main menu__\n")
+
+    @staticmethod
+    def returning_to_menu():
+        """ method that displays msg that user is going back to main menu"""
+        print("\nReturning to main menu...\n")
 
     @staticmethod
     def show_list(user_role, list_type, object_list):

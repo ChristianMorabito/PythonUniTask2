@@ -14,14 +14,22 @@ def login_control():
                 IOInterface.print_message(
                     "\n__LOGIN__\n" if choice == 1 else "\n__REGISTER__\n" if choice == 2 else "Quitting...")
                 break
-            IOInterface.print_error_message("main.login_control()", "Input out of range! Try again...")
+            IOInterface.print_error_message("main.login_control()",
+                                            "Input out of range! Try again...")
         except ValueError:
-            IOInterface.print_error_message("main.login_control()", "Enter only a number! Try again...")
+            IOInterface.print_error_message("main.login_control()",
+                                            "Enter only a number! Try again...")
 
     if choice == 1:  # user enters username & p/w to login
-        user_name = IOInterface.get_user_input("Enter USERNAME: ", num_of_args=1)[0]  # returns username @ 0th index
-        user_password = IOInterface.get_user_input("Enter PASSWORD: ", num_of_args=1)[0]  # returns p/w @ 0th index
-        UserOperation.login(user_name, user_password)
+        user_name = IOInterface.get_user_input("Enter USERNAME: ",
+                                               num_of_args=1)[0]  # returns username @ 0th index
+        user_password = IOInterface.get_user_input("Enter PASSWORD: ",
+                                                   num_of_args=1)[0]  # returns p/w @ 0th index
+        logged_obj = UserOperation.login(user_name, user_password)
+        if not logged_obj or logged_obj == 1:
+            IOInterface.print_error_message("UserOperation.login()",
+                                            "Unexpected error!" if logged_obj == 1 else "Invalid details entered.")
+
     elif choice == 2:  # user registers as new customer
         customer_control()
     else:
@@ -30,8 +38,8 @@ def login_control():
 
 def customer_control():
     reg = {  # the value in dict is a list w/ x3 items:
-        # 1) an empty string to accept user input & 2) display function to show user input requirements
-        # 3) corresponding validation function to check input
+             # 1) an empty string to accept user input & 2) display function to show user input requirements
+             # 3) corresponding validation function to check input
         "username": ["", IOInterface.register_username, UserOperation.validate_username],
         "password": ["", IOInterface.register_password, UserOperation.validate_password],
         "email address": ["", IOInterface.register_email, CustomerOperation.validate_email],
@@ -42,20 +50,27 @@ def customer_control():
         while True:
             display_requirement, validation = reg[area][1], reg[area][2]
             display_requirement()
+            IOInterface.go_to_menu()
             reg[area][0] = IOInterface.get_user_input(f"Enter {area}: ", num_of_args=1)[0]  # returns string
+
+            name_check = UserOperation.check_username_exist(reg["username"][0])
+            if area == "username" and name_check:
+                IOInterface.print_error_message("UserOperation.check_username_exist()",
+                                                "Username already exists!" if type(name_check) == bool
+                                                else "FileNotFound or OS error")
+                continue
+            if UserOperation.validate_menu(reg[area][0]):
+                IOInterface.returning_to_menu()
+                return
             if validation(reg[area][0]):
                 break
             IOInterface.print_error_message(f"{validation.__module__}.{validation.__name__}()",
-                                            f"\nINVALID: {area} did not meet requirement. Please try again.")
+                                            f"\nINVALID: {area} failed the requirements. Please try again.")
 
-    if UserOperation.check_username_exist(reg["username"][0]):
-        IOInterface.print_error_message("main.customer_control()", "Username already exists!")
-    else:
-        if not CustomerOperation.register_customer(
-                reg["username"][0], reg["password"][0], reg["email address"][0], reg["mobile number"][0]):
-            IOInterface.print_error_message(
-                "operation_user.generate_unique_user_id()",
-                f"\nFileNotFound or OS error")
+    if not CustomerOperation.register_customer(reg["username"][0], reg["password"][0],
+                                               reg["email address"][0], reg["mobile number"][0]):
+        IOInterface.print_error_message("UserOperation.generate_unique_user_id()",
+                                        f"FileNotFound or OS error")
 
 
 def admin_control():

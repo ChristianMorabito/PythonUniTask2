@@ -22,3 +22,19 @@ user_role: customer
 user_email: jiggles@hotmail.com
 user_mobile: 0412341234
 
+user_id: u_0000000003
+user_name: chrisdsf
+user_password: ^^KQovngZgoK0gjJobAgRKoaAge51$$
+user_register_time: 28-09-2023_16:34:03
+user_role: customer
+user_email: asdfdsf@dsfsd.com
+user_mobile: 0412341234
+
+user_id: u_0000000004
+user_name: sdafsdafdsf
+user_password: ^^YUalpsuwd3df40s09dUTfiEsUBfCg3$$
+user_register_time: 28-09-2023_17:00:50
+user_role: customer
+user_email: chris@dfsdf.c
+user_mobile: 0412341234
+

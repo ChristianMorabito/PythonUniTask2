@@ -83,14 +83,12 @@ class CustomerOperation:
         return True
 
     @staticmethod
-    def update_profile(attribute_name, value, customer_object):
+    def update_profile(update_data, customer_object):
         """
         Method to update the given customer object’s attribute value
-        :param attribute_name: accepts str for attribute name
-        :param value: accepts str for attribute value
+        :param update_data: accepts dict. of attribute_name/value
         :param customer_object: accepts customer object
-        :return: returns bool depending on validation
-                 to ensure input value is valid
+        :return: returns updated customer_object
         """
         pass
 

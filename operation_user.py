@@ -139,11 +139,12 @@ class UserOperation:
                         file_user_name = file_list[i][11:-1]
                         if file_user_name != user_name:
                             continue
-                        file_user_password = file_list[i+1][15:-1]
-                        if UserOperation.decrypt_password(file_user_password) != user_password:
+                        file_user_pw = file_list[i+1][15:-1]
+                        decrypted_pw = UserOperation.decrypt_password(file_user_pw)
+                        if decrypted_pw != user_password:
                             return None
                         user_name = file_user_name
-                        user_password = file_user_password
+                        user_password = decrypted_pw
                         user_id = file_list[i-1][9:-1]
                         user_register_time = file_list[i+2][20:-1]
                         user_email = file_list[i+4][12:-1]

@@ -43,12 +43,24 @@ class IOInterface:
         show history orders, gen. all consumption figures, logout.
         :return: None
         """
-        print("(1) Show profile"
-              "(2) Update profile"
-              "(3) Show products ('3 keyword' or '3'"
-              "(4) Show history orders"
-              "(5) Generate all consumption figures"
-              "(6) Logout")
+        print("\n__CUSTOMER MENU__\n\n"
+              "(1) Show profile\n"
+              "(2) Update profile\n"
+              "(3) Show products ('3 keyword' or '3')\n"
+              "(4) Show history orders\n"
+              "(5) Generate all consumption figures\n"
+              "(6) Logout\n")
+
+    @staticmethod
+    def update_details():
+        """ method to display msg to update user details"""
+        print("Input number/s between 1 - 4, separated by space/s\n"
+              "of the detail/s you'd like to update. Or leave input\n"
+              "blank to update all details.\n"
+              "\t\t1) username\n"
+              "\t\t2) password\n"
+              "\t\t3) email address\n"
+              "\t\t4) mobile number\n")
 
     @staticmethod
     def register_requirement():
@@ -82,12 +94,35 @@ class IOInterface:
     @staticmethod
     def go_to_menu():
         """ method that displays command option for user to go back"""
-        print("__type 'menu' to go back to the main menu__\n")
+        print("__type 'menu' to quit & return to previous menu. NOTE: changes won't be saved__\n")
 
     @staticmethod
     def returning_to_menu():
         """ method that displays msg that user is going back to main menu"""
         print("\nReturning to main menu...\n")
+
+    @staticmethod
+    def text_box(string):
+        vertical, horizontal = "║", "═"
+        max_len = local_len = 0
+        temp_string = ""
+        lines_list = []
+        for i in range(len(string)):
+            temp_string += string[i]
+            if string[i] != "\n":
+                local_len += 1
+            else:
+                lines_list.append(vertical + " " + temp_string)
+                temp_string = ""
+                max_len = max(max_len, local_len)
+                local_len = 0
+
+        for i in range(len(lines_list)):
+            lines_list[i] = lines_list[i][:-1] + (" " * (max_len - len(lines_list[i]) + 4)) + "║" + "\n"
+
+        top = "╔" + ("═" * (max_len + 2)) + "╗\n"
+        base = "╚" + ("═" * (max_len + 2)) + "╝\n"
+        print(top + "".join(lines_list) + base)
 
     @staticmethod
     def show_list(user_role, list_type, object_list):
@@ -126,4 +161,4 @@ class IOInterface:
         :param target_object: accepts obj
         :return: None
         """
-        pass
+        print(target_object.__str__())

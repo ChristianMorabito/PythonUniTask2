@@ -83,14 +83,27 @@ class CustomerOperation:
         return True
 
     @staticmethod
-    def update_profile(update_data, customer_object):
+    def update_profile(update_data, customer):
         """
         Method to update the given customer object’s attribute value
         :param update_data: accepts dict. of attribute_name/value
-        :param customer_object: accepts customer object
+        :param customer: accepts customer object
         :return: returns updated customer_object
         """
-        pass
+        try:
+            with open("data/users.txt", "a") as file:
+                file_list = list(file)
+                for i, line in enumerate(file_list):
+                    if line[:9] == "user_name" and line[11:-1] == customer.user_name:
+
+                # encrypted_pw = UserOperation.encrypt_password(user_password)
+
+        except FileNotFoundError or OSError:
+            return False
+
+        return True
+
+
 
     @staticmethod
     def delete_customer(customer_id):

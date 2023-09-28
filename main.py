@@ -9,8 +9,8 @@ def customer_update(user):
     input_reference = {"1": "username", "2": "password", "3": "email address", "4": "mobile number"}
     update_set = set()
     IOInterface.update_details()
-    raw_choice = IOInterface.get_user_input("Enter: ", num_of_args=4)
-    for choice in raw_choice:
+    choice_list = IOInterface.get_user_input("Enter: ", num_of_args=4)
+    for choice in choice_list:
         try:
             if choice and not (0 < int(choice) < 5):
                 IOInterface.print_error_message("main.customer_update()", "Input out of range!")
@@ -23,8 +23,8 @@ def customer_update(user):
             update_set.add(input_reference[choice])
     if not update_set:
         update_set = {input_reference[item] for item in input_reference}
-    print(process_customer(update_set))
-    # return CustomerOperation.update_profile(process_customer(update_set), user)
+    update_data = process_customer(update_set)
+    return None if not update_data else CustomerOperation.update_profile(update_data, user)
 
 
 def process_customer(register_update=None):
@@ -39,6 +39,8 @@ def process_customer(register_update=None):
 
     if not register_update:
         IOInterface.register_requirement()
+    else:
+        IOInterface.print_message("__UPDATE PROFILE__\n")
     for area in reg:  # 'area' is a str: e.g: 'username', [...], 'mobile'
         if register_update and area not in register_update:
             continue
@@ -47,16 +49,16 @@ def process_customer(register_update=None):
             display_requirement()
             IOInterface.go_to_menu()
             reg[area][0] = IOInterface.get_user_input(f"Enter {area}: ", num_of_args=1)[0]  # returns string
-
-            name_check = UserOperation.check_username_exist(reg["username"][0])
-            if area == "username" and name_check:
-                IOInterface.print_error_message("UserOperation.check_username_exist()",
-                                                "Username already exists!" if type(name_check) == bool
-                                                else "FileNotFound or OS error")
-                continue
             if UserOperation.validate_menu(reg[area][0]):
                 IOInterface.returning_to_menu()
                 return
+            if area == "username":
+                name_check = UserOperation.check_username_exist(reg["username"][0])
+                if name_check:
+                    IOInterface.print_error_message("UserOperation.check_username_exist()",
+                                                    "Username already exists!" if type(name_check) == bool
+                                                    else "FileNotFound or OS error")
+                    continue
             if validation(reg[area][0]):
                 break
             IOInterface.print_error_message(f"{validation.__module__}.{validation.__name__}()",
@@ -73,7 +75,7 @@ def customer_control(user):
 
     logged_in = True
 
-    input_msg = {1: "__PROFILE__", 2: "__UPDATE__", 3: "__PRODUCTS__",
+    input_msg = {1: "__PROFILE__", 2: "__UPDATE PROFILE__", 3: "__PRODUCTS__",
                  4: "__HISTORY__", 5: "__FIGURES__", 6: "Logging out..."}
 
     while logged_in:
@@ -93,7 +95,8 @@ def customer_control(user):
             if choice == 1:  # show profile
                 IOInterface.text_box(user.__str__())
             elif choice == 2:  # update profile
-                user = customer_update(user)
+                user_update = customer_update(user)
+                user = user if not user_update else user_update
             elif choice == 3:  # show products (input could have keyword)
                 pass
             elif choice == 4:  # show history orders

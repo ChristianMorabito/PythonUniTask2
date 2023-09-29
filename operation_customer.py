@@ -91,17 +91,32 @@ class CustomerOperation:
         :return: returns updated customer_object
         """
         try:
-            with open("data/users.txt", "a") as file:
-                file_list = list(file)
-                for i, line in enumerate(file_list):
-                    if line[:9] == "user_name" and line[11:-1] == customer.user_name:
-
-                # encrypted_pw = UserOperation.encrypt_password(user_password)
+            # TODO: send file_list to overwrite the old users.txt file
+            with open("data/users.txt", "r") as file:
+                file_list = [line.split() for line in file]
+                customer_found = False
+                for line in file_list:
+                    if line and line[0] == "user_name:" and line[1] == customer.user_name:
+                        customer_found = True
+                        if "username" in update_data:
+                            line[1] = update_data["username"]
+                            customer.user_name = update_data["username"]
+                    elif customer_found and line[0] == "user_password:" and "password" in update_data:
+                        encrypted_pw = UserOperation.encrypt_password(update_data["password"])
+                        line[1] = encrypted_pw
+                        customer.user_password = update_data["password"]
+                    elif customer_found and line[0] == "user_email:" and "email address" in update_data:
+                        line[1] = update_data["email address"]
+                        customer.user_email = update_data["email address"]
+                    elif customer_found and line[0] == "user_mobile:" and "mobile number" in update_data:
+                        line[1] = update_data["mobile number"]
+                        customer.user_mobile = update_data["mobile number"]
+                    if customer_found and line[0] == "user_mobile:":
+                        break
 
         except FileNotFoundError or OSError:
-            return False
-
-        return True
+            return None
+        return customer
 
 
 

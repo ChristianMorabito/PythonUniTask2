@@ -1,6 +1,7 @@
 from io_interface import IOInterface
 from operation_customer import CustomerOperation
 from operation_user import UserOperation
+from operation_product import ProductOperation
 
 main_loop = True
 
@@ -23,11 +24,11 @@ def customer_update(user):
             update_set.add(input_reference[choice])
     if not update_set:
         update_set = {input_reference[item] for item in input_reference}
-    update_data = process_customer(update_set)
+    update_data = process_customer(update_set, user.user_name)
     return None if not update_data else CustomerOperation.update_profile(update_data, user)
 
 
-def process_customer(register_update=None):
+def process_customer(register_update=None, customer_name=None):
     reg = {  # the value in dict is a list w/ x3 items:
         # 1) an empty string to accept user input & 2) display function to show user input requirements
         # 3) corresponding validation function to check input
@@ -50,9 +51,13 @@ def process_customer(register_update=None):
             IOInterface.go_to_menu()
             reg[area][0] = IOInterface.get_user_input(f"Enter {area}: ", num_of_args=1)[0]  # returns string
             if UserOperation.validate_menu(reg[area][0]):
-                IOInterface.returning_to_menu()
+                IOInterface.print_going_back()
                 return
             if area == "username":
+                if customer_name and customer_name == reg["username"][0]:
+                    IOInterface.print_error_message("UserOperation.process_customer()",
+                                                    "Username is identical. Try a different username!")
+                    continue
                 name_check = UserOperation.check_username_exist(reg["username"][0])
                 if name_check:
                     IOInterface.print_error_message("UserOperation.check_username_exist()",
@@ -85,26 +90,26 @@ def customer_control(user):
         try:
             raw_choice, keyword = IOInterface.get_user_input("Enter: ", num_of_args=2)
             choice = int(raw_choice[0])
-            if 0 < choice < 7:
+            if 0 < int(raw_choice) < 7:
                 IOInterface.print_message(input_msg[choice] + "\n")
+
+                if choice == 1:  # show profile
+                    IOInterface.text_box(user.__str__())
+                elif choice == 2:  # update profile
+                    user_update = customer_update(user)
+                    user = user if not user_update else user_update
+                elif choice == 3:  # show products (input could have keyword)
+                    ProductOperation.extract_products_from_files()
+                elif choice == 4:  # show history orders
+                    pass
+                elif choice == 5:  # generate all consumption figures
+                    pass
+                else:  # log out
+                    logged_in = False
 
             else:
                 IOInterface.print_error_message("main.customer_control()",
                                                 "Input out of range! Try again...")
-
-            if choice == 1:  # show profile
-                IOInterface.text_box(user.__str__())
-            elif choice == 2:  # update profile
-                user_update = customer_update(user)
-                user = user if not user_update else user_update
-            elif choice == 3:  # show products (input could have keyword)
-                pass
-            elif choice == 4:  # show history orders
-                pass
-            elif choice == 5:  # generate all consumption figures
-                pass
-            elif choice == 6:  # logout
-                logged_in = False
 
         except ValueError:
             IOInterface.print_error_message("main.customer_control()",
@@ -152,6 +157,8 @@ def admin_control():
 
 
 def main():
+    # TODO: REMOVE THIS
+    ProductOperation.extract_products_from_files()
     while main_loop:
         login_control()
 

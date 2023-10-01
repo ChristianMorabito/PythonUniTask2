@@ -37,4 +37,3 @@ user_register_time: 28-09-2023_17:00:50
 user_role: customer
 user_email: chris@dfsdf.c
 user_mobile: 0412341234
-

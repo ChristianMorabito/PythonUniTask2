@@ -1,15 +1,30 @@
-
+import os
+import pandas as pd
+from model_product import Product
 class ProductOperation:
 
-    def extract_products_from_files(self):
+    @staticmethod
+    def extract_products_from_files():
         """
         Method to extract product info from the given
         product data files
         :return: None
         """
-        pass
 
-    def get_product_list(self, page_number):
+        try:
+            files = os.listdir("product")
+            for file_name in files:
+                df = pd.read_csv(file_name)
+                # TODO: FIX
+                product = [Product(row['name'], row['age'], row['city']) for _, row in df.iterrows()]
+
+
+        except FileNotFoundError or OSError:
+            return False
+        return True
+
+    @staticmethod
+    def get_product_list(page_number):
         """
         method which retrieves one page of
         products from the database
@@ -19,7 +34,8 @@ class ProductOperation:
         """
         pass
 
-    def delete_product(self, product_id):
+    @staticmethod
+    def delete_product(product_id):
         """
         method to delete the product info from system, i.e. data/products.txt
         based on provided product_id
@@ -28,7 +44,8 @@ class ProductOperation:
         """
         pass
 
-    def get_product_list_by_keyword(self, keyword):
+    @staticmethod
+    def get_product_list_by_keyword(keyword):
         """
         method to retrieve all products whose name
         contains the keyword (case sensitive)
@@ -37,7 +54,8 @@ class ProductOperation:
         """
         pass
 
-    def get_product_by_id(self, product_id):
+    @staticmethod
+    def get_product_by_id(product_id):
         """
         method returns 1 product object based on the given ID
         :param product_id: accepts product_id as str
@@ -45,7 +63,8 @@ class ProductOperation:
         """
         pass
 
-    def generate_category_figure(self):
+    @staticmethod
+    def generate_category_figure():
         """
         method generates a bar chart that shows the total no.
         of products for each category in descending order.
@@ -54,7 +73,8 @@ class ProductOperation:
         """
         pass
 
-    def generate_discount_figure(self):
+    @staticmethod
+    def generate_discount_figure():
         """
          method generates pie chart that shows the proportion of
          products that have a discount value < 30, 30 >= 60, & > 60.
@@ -63,7 +83,8 @@ class ProductOperation:
         """
         pass
 
-    def generate_likes_count_figure(self):
+    @staticmethod
+    def generate_likes_count_figure():
         """
         method generates chart displaying the sum of products’ likes_count
         for each category (ascending). Chart is saved into the data/figure folder
@@ -71,7 +92,8 @@ class ProductOperation:
         """
         pass
 
-    def generate_dislikes_count_figure(self):
+    @staticmethod
+    def generate_dislikes_count_figure():
         """
         method generates scatter chart showing relationship
         between likes_count/discount for all products.
@@ -80,7 +102,8 @@ class ProductOperation:
         """
         pass
 
-    def delete_all_products(self):
+    @staticmethod
+    def delete_all_products():
         """
         method removes all the product data in the data/products.txt file
         :return: None

@@ -97,9 +97,9 @@ class IOInterface:
         print("__type 'menu' to quit & return to previous menu. NOTE: changes won't be saved__\n")
 
     @staticmethod
-    def returning_to_menu():
+    def print_going_back():
         """ method that displays msg that user is going back to main menu"""
-        print("\nReturning to main menu...\n")
+        print("\nGoing back...\n")
 
     @staticmethod
     def text_box(string):

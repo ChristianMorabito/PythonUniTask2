@@ -90,30 +90,32 @@ class CustomerOperation:
         :param customer: accepts customer object
         :return: returns updated customer_object
         """
+
         try:
-            # TODO: send file_list to overwrite the old users.txt file
-            with open("data/users.txt", "r") as file:
-                flist = [" ".join(line.split()) for line in file]
+            with open("data/users.txt", "r") as file:  # open file to read
+                file_list = [" ".join(line.split()) for line in file]
 
-                for i, line in enumerate(flist):
-                    if line and line[:9] == "user_name" and line[:11] == customer.user_name:
-                        if "username" in update_data:
-                            flist[i] = "user_name: " + update_data["username"]
-                            customer.user_name = update_data["username"]
-                        if "password" in update_data:
-                            encrypted_pw = UserOperation.encrypt_password(update_data["password"])
-                            flist[i+1] = encrypted_pw
-                            customer.user_password = "user_password: " + update_data["password"]
-                        if "email address" in update_data:
-                            flist[i+4] = "user_email" + update_data["email address"]
-                            customer.user_email = update_data["email address"]
-                        if "mobile number" in update_data:
-                            flist[i+5] = "user_mobile: " + update_data["mobile number"]
-                            customer.user_mobile = update_data["mobile number"]
-                        break
+            for i, line in enumerate(file_list):
+                if line and line[11:] == customer.user_name:
+                    if "username" in update_data:
+                        file_list[i] = "user_name: " + update_data["username"]
+                        customer.user_name = update_data["username"]
+                    if "password" in update_data:
+                        encrypted_pw = UserOperation.encrypt_password(update_data["password"])
+                        file_list[i+1] = "user_password: " + encrypted_pw
+                        customer.user_password = update_data["password"]
+                    if "email address" in update_data:
+                        file_list[i+4] = "user_email: " + update_data["email address"]
+                        customer.user_email = update_data["email address"]
+                    if "mobile number" in update_data:
+                        file_list[i+5] = "user_mobile: " + update_data["mobile number"]
+                        customer.user_mobile = update_data["mobile number"]
+                    break
 
-                write_string = "\n".join(flist)
-                print(write_string)
+            write_string = "\n".join(file_list)
+
+            with open("data/users.txt", "w") as file:  # Open file to write
+                file.write(write_string)
 
         except FileNotFoundError or OSError:
             return None
@@ -129,7 +131,26 @@ class CustomerOperation:
         :param customer_id: accepts customer_id str
         :return: returns bool depending on success
         """
-        pass
+        try:
+            with open("data/users.txt", "r") as file:  # open file to read
+                file_list = [" ".join(line.split()) for line in file]
+                found_customer = False
+
+            for i, line in enumerate(file_list):
+                if line and line[9:] == customer_id:
+                    found_customer = True
+                    for _ in range(i, i+8):
+                        del file_list[i]
+                    break
+
+            write_string = "\n".join(file_list)
+
+            with open("data/users.txt", "w") as file:  # Open file to write
+                file.write(write_string)
+
+        except FileNotFoundError or OSError:
+            return False
+        return found_customer
 
     @staticmethod
     def get_customer_list(page_number):

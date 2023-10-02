@@ -1,24 +1,30 @@
 import os
-import pandas as pd
 from model_product import Product
+import pandas as pd
+
+
 class ProductOperation:
 
     @staticmethod
     def extract_products_from_files():
-        """
-        Method to extract product info from the given
-        product data files
-        :return: None
-        """
-
+        """ Method to extract product info from the given product data file """
         try:
             files = os.listdir("product")
-            for file_name in files:
-                df = pd.read_csv(file_name)
-                # TODO: FIX
-                product = [Product(row['name'], row['age'], row['city']) for _, row in df.iterrows()]
-
-
+            with open("data/products.txt", "w", encoding='utf-8') as w_file:
+                for file_name in files:
+                    w_file.write("__" + file_name[:-4].upper() + "__" + "\n\n")
+                    df = pd.read_csv("product/" + file_name)
+                    for _, row in df.iterrows():
+                        pro_id = row["id"]
+                        model = row["model"]
+                        category = row["category"]
+                        name = row["name"]
+                        current_price = row["current_price"]
+                        raw_price = row["raw_price"]
+                        discount = row["discount"]
+                        likes_count = row["likes_count"]
+                        w_file.write(Product(pro_id, model, category, name, current_price,
+                                             raw_price, discount, likes_count).__str__() + "\n\n")
         except FileNotFoundError or OSError:
             return False
         return True
@@ -109,5 +115,4 @@ class ProductOperation:
         :return: None
         """
         pass
-
 

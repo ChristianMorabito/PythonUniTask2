@@ -83,6 +83,16 @@ def customer_control(user):
     input_msg = {1: "__PROFILE__", 2: "__UPDATE PROFILE__", 3: "__PRODUCTS__",
                  4: "__HISTORY__", 5: "__FIGURES__", 6: "Logging out..."}
 
+    IOInterface.print_message("\nLoading store data...\n")
+
+    if not ProductOperation.extract_products_from_files():
+        IOInterface.print_error_message("operation_product.extract_products_from_files()",
+                                        "Error loading store data. Logging out...")
+        return
+    IOInterface.print_message("SUCCESS!! You are now logged in")
+
+
+
     while logged_in:
 
         IOInterface.customer_menu()
@@ -99,7 +109,7 @@ def customer_control(user):
                     user_update = customer_update(user)
                     user = user if not user_update else user_update
                 elif choice == 3:  # show products (input could have keyword)
-                    ProductOperation.extract_products_from_files()
+                    pass
                 elif choice == 4:  # show history orders
                     pass
                 elif choice == 5:  # generate all consumption figures
@@ -157,8 +167,6 @@ def admin_control():
 
 
 def main():
-    # TODO: REMOVE THIS
-    ProductOperation.extract_products_from_files()
     while main_loop:
         login_control()
 

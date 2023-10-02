@@ -65,7 +65,7 @@ class CustomerOperation:
         :return: returns bool depending on validation to ensure all input values are valid
         """
         try:
-            with open("data/users.txt", "a") as file:
+            with open("data/users.txt", "a", encoding='utf-8') as file:
                 user_id = UserOperation.generate_unique_user_id()
                 if user_id == "-1":
                     return False
@@ -92,7 +92,7 @@ class CustomerOperation:
         """
 
         try:
-            with open("data/users.txt", "r") as file:  # open file to read
+            with open("data/users.txt", "r", encoding='utf-8') as file:  # open file to read
                 file_list = [" ".join(line.split()) for line in file]
 
             for i, line in enumerate(file_list):
@@ -114,7 +114,7 @@ class CustomerOperation:
 
             write_string = "\n".join(file_list)
 
-            with open("data/users.txt", "w") as file:  # Open file to write
+            with open("data/users.txt", "w", encoding='utf-8') as file:  # Open file to write
                 file.write(write_string)
 
         except FileNotFoundError or OSError:
@@ -132,7 +132,7 @@ class CustomerOperation:
         :return: returns bool depending on success
         """
         try:
-            with open("data/users.txt", "r") as file:  # open file to read
+            with open("data/users.txt", "r", encoding='utf-8') as file:  # open file to read
                 file_list = [" ".join(line.split()) for line in file]
                 found_customer = False
 
@@ -145,7 +145,7 @@ class CustomerOperation:
 
             write_string = "\n".join(file_list)
 
-            with open("data/users.txt", "w") as file:  # Open file to write
+            with open("data/users.txt", "w", encoding='utf-8') as file:  # Open file to write
                 file.write(write_string)
 
         except FileNotFoundError or OSError:

@@ -4,6 +4,8 @@ import pandas as pd
 
 
 class ProductOperation:
+    len_products_txt = 1
+    page_amount = (len_products_txt // 10) + 1
 
     @staticmethod
     def extract_products_from_files():
@@ -12,7 +14,6 @@ class ProductOperation:
             files = os.listdir("product")
             with open("data/products.txt", "w", encoding='utf-8') as w_file:
                 for file_name in files:
-                    w_file.write("__" + file_name[:-4].upper() + "__" + "\n\n")
                     df = pd.read_csv("product/" + file_name)
                     for _, row in df.iterrows():
                         pro_id = row["id"]
@@ -24,7 +25,9 @@ class ProductOperation:
                         discount = row["discount"]
                         likes_count = row["likes_count"]
                         w_file.write(Product(pro_id, model, category, name, current_price,
-                                             raw_price, discount, likes_count).__str__() + "\n\n")
+                                             raw_price, discount, likes_count).__str__() + "\n")
+            ProductOperation.len_products_txt = len(w_file.readlines())
+
         except FileNotFoundError or OSError:
             return False
         return True
@@ -32,13 +35,26 @@ class ProductOperation:
     @staticmethod
     def get_product_list(page_number):
         """
-        method which retrieves one page of
-        products from the database
+        method which retrieves one page of products from the database
         :param page_number: accepts page no. int
-        :return: returns tuple e.g.
-        ([Product1,Product2,Product3,...Product10],page_no, total_page)
+        :return: returns tuple e.g. ([Product1,Product2,Product3,...Product10],page_no, total_page)
         """
-        pass
+        try:
+            with open("data/products.txt", "r", encoding="utf-8") as file:
+                if page_number < 1:
+                    return None
+                file = list(file)
+                start, stop = (page_number * 10) - 10, page_number * 10
+                product_list = []
+                for i in range(len(file)):
+                    if start <= i < stop:
+                        product_list.append(file[i])
+                    elif i == stop:
+                        break
+        except FileNotFoundError or OSError:
+            return None
+
+        return product_list, page_number, ProductOperation.page_amount
 
     @staticmethod
     def delete_product(product_id):

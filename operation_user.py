@@ -17,7 +17,7 @@ class UserOperation:
             return "u_0000000000"
 
         try:
-            with open("data/users.txt", "r") as file:
+            with open("data/users.txt", "r", encoding='utf-8') as file:
 
                 last_id = ""
 
@@ -68,7 +68,7 @@ class UserOperation:
         :return: returns bool to determine if provided user_name exists
         """
         try:
-            with open("data/users.txt", "r") as file:
+            with open("data/users.txt", "r", encoding='utf-8') as file:
                 for line in file:
 
                     # note: the -1 on the list-slice is to remove the implicit new-line char. at end-of-line
@@ -130,7 +130,7 @@ class UserOperation:
         """
 
         try:
-            with open("data/users.txt", "r") as file:
+            with open("data/users.txt", "r", encoding='utf-8') as file:
                 file_list = list(file)
                 for i in range(len(file_list)):
 

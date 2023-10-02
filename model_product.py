@@ -22,11 +22,11 @@ class Product:
         self.pro_likes_count = pro_likes_count
 
     def __str__(self):
-        return (f"pro_id: {self.pro_id}\n"
-                f"pro_model: {self.pro_model}\n"
-                f"pro_category: {self.pro_category}\n"
-                f"pro_name: {self.pro_name}\n"
-                f"pro_current_price: {self.pro_current_price}\n"
-                f"pro_raw_price: {self.pro_raw_price}\n"
-                f"pro_discount: {self.pro_discount}\n"
+        return (f"pro_id: {self.pro_id}, "
+                f"pro_model: {self.pro_model}, "
+                f"pro_category: {self.pro_category}, "
+                f"pro_name: {self.pro_name}, "
+                f"pro_current_price: {self.pro_current_price}, "
+                f"pro_raw_price: {self.pro_raw_price}, "
+                f"pro_discount: {self.pro_discount}, "
                 f"pro_likes_count: {self.pro_likes_count}")

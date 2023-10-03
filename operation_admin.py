@@ -12,8 +12,7 @@ class AdminOperation:
         try:
             with open("data/users.txt", "r", encoding="utf-8") as r_file:
                 if os.path.getsize("data/users.txt") != 0:
-                    admin_default_name = Admin.__init__.__defaults__[1]
-                    file_name = r_file.read().split(", ")[1][11:]
+                    admin_default_name, file_name = Admin.__init__.__defaults__[1], r_file.read().split(", ")[1][11:]
                     return admin_default_name == file_name
             with open("data/users.txt", "w", encoding="utf-8") as w_file:
                 user_time = time.strftime("%d-%m-%Y_%H:%M:%S")

@@ -1,6 +1,5 @@
 import re
 import time
-
 from model_customer import Customer
 from operation_user import UserOperation
 
@@ -54,13 +53,14 @@ class CustomerOperation:
         return len(mobile) == 10 and re.match(r'^[0-9]+$', mobile) and mobile[:2] == "04" or mobile[:2] == "03"
 
     @staticmethod
-    def register_customer(user_name, user_password, user_email, user_mobile):
+    def register_customer(user_name, user_password, user_email, user_mobile, r_time=None):
         """
         Method to save the info. of the new customer into the data/users.txt file
         :param user_name: user provided name str
         :param user_password: user provided p/w str
         :param user_email: user provided email str
         :param user_mobile: user provided mobile int
+        :param r_time: generates random timestamp
         :return: returns bool depending on validation to ensure all input values are valid
         """
         try:
@@ -69,7 +69,7 @@ class CustomerOperation:
                 if user_id == "-1":
                     return False
 
-                user_time = time.strftime("%d-%m-%Y_%H:%M:%S")
+                user_time = time.strftime("%d-%m-%Y_%H:%M:%S") if not r_time else r_time
                 encrypted_pw = UserOperation.encrypt_password(user_password)
                 file.write(Customer(
                     user_id, user_name, encrypted_pw, user_time,
@@ -121,8 +121,6 @@ class CustomerOperation:
         except FileNotFoundError or OSError:
             return None
         return customer
-
-
 
     @staticmethod
     def delete_customer(customer_id):

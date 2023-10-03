@@ -2,7 +2,7 @@ import os
 import re
 import random as r
 from model_customer import Customer
-
+from model_admin import Admin
 
 class UserOperation:
 
@@ -13,17 +13,19 @@ class UserOperation:
         starting with ‘u_’ when new user is registered.
         :return: returns str value in the format 'u_10digits'
         """
-        if os.path.getsize("data/users.txt") == 0:
-            return "u_0000000000"
 
         try:
+            if os.path.getsize("data/users.txt") == 0:
+                return "u_0000000000"
+
             with open("data/users.txt", "r", encoding='utf-8') as file:
 
                 last_id = ""
 
                 for line in file:
+
                     if line[:7] == "user_id":
-                        last_id = line[11:-1]  # if test == 'user_id: u_0000000000\n', then last_id == '0000000000'
+                        last_id = line[11:21]
                 user_id = "u_" + str(int(last_id) + 1).zfill(len(last_id))
                 # reference: https://stackoverflow.com/questions/587647/how-to-increment-a-value-with-leading-zeroes
 
@@ -68,11 +70,12 @@ class UserOperation:
         :return: returns bool to determine if provided user_name exists
         """
         try:
+            if os.path.getsize("data/users.txt") == 0:
+                return False
+
             with open("data/users.txt", "r", encoding='utf-8') as file:
                 for line in file:
-
-                    # note: the -1 on the list-slice is to remove the implicit new-line char. at end-of-line
-                    if line[:9] == "user_name" and line[11:-1] == user_name:
+                    if line and line.split(", ")[1][11:] == user_name:
                         return True
 
         except FileNotFoundError or OSError or IndexError:
@@ -122,8 +125,7 @@ class UserOperation:
     @staticmethod
     def login(user_name, user_password):
         """
-        Method to verify user_name & p/w
-        to determine the authorization status for sys access.
+        Method to authorise customer/admin for login.
         :param user_name: user provided user_name str
         :param user_password: user provided p/w str
         :return: returns Customer or Admin object
@@ -131,25 +133,24 @@ class UserOperation:
 
         try:
             with open("data/users.txt", "r", encoding='utf-8') as file:
-                file_list = list(file)
-                for i in range(len(file_list)):
-
-                    # note: the -1 on the list-slice is to remove the implicit new-line char. at end-of-line
-                    if file_list[i][:9] == "user_name":
-                        file_user_name = file_list[i][11:-1]
+                for i, line in enumerate(file):
+                    if line and line.split(", ")[1][11:] == user_name:
+                        line_split = line.split(", ")
+                        file_user_name = line_split[1][11:]
                         if file_user_name != user_name:
                             continue
-                        file_user_pw = file_list[i+1][15:-1]
+                        file_user_pw = line_split[2][15:]
                         decrypted_pw = UserOperation.decrypt_password(file_user_pw)
                         if decrypted_pw != user_password:
                             return None
                         user_name = file_user_name
                         user_password = decrypted_pw
-                        user_id = file_list[i-1][9:-1]
-                        user_register_time = file_list[i+2][20:-1]
-                        user_email = file_list[i+4][12:-1]
-                        user_mobile = file_list[i+5][13:-1]
-
+                        user_id = line_split[0][9:]
+                        user_register_time = line_split[3][20:]
+                        if i == 0:
+                            return Admin(user_id, user_name, user_password, user_register_time)
+                        user_email = line_split[5][12:]
+                        user_mobile = line_split[6][13:]
                         return Customer(user_id, user_name, user_password, user_register_time,
                                         user_email=user_email, user_mobile=user_mobile)
 
@@ -159,10 +160,5 @@ class UserOperation:
         return None
 
 
-
-
-
-
-
-
+UserOperation.login("admin", "admin1")
 

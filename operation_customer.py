@@ -1,7 +1,6 @@
 import re
 import time
 
-import operation_user
 from model_customer import Customer
 from operation_user import UserOperation
 
@@ -74,8 +73,7 @@ class CustomerOperation:
                 encrypted_pw = UserOperation.encrypt_password(user_password)
                 file.write(Customer(
                     user_id, user_name, encrypted_pw, user_time,
-                    user_email=user_email, user_mobile=user_mobile).__str__())
-                file.write("\n")
+                    user_email=user_email, user_mobile=user_mobile).__str__() + "\n")
 
         except FileNotFoundError or OSError:
             return False
@@ -93,26 +91,29 @@ class CustomerOperation:
 
         try:
             with open("data/users.txt", "r", encoding='utf-8') as file:  # open file to read
-                file_list = [" ".join(line.split()) for line in file]
-
+                file_list = list(file)
             for i, line in enumerate(file_list):
-                if line and line[11:] == customer.user_name:
+                if line and line.split(", ")[1][11:] == customer.user_name:
+                    line_split = line.split(", ")
+
                     if "username" in update_data:
-                        file_list[i] = "user_name: " + update_data["username"]
+                        line_split[1] = "user_name: " + update_data["username"]
                         customer.user_name = update_data["username"]
                     if "password" in update_data:
                         encrypted_pw = UserOperation.encrypt_password(update_data["password"])
-                        file_list[i+1] = "user_password: " + encrypted_pw
+                        line_split[2] = "user_password: " + encrypted_pw
                         customer.user_password = update_data["password"]
                     if "email address" in update_data:
-                        file_list[i+4] = "user_email: " + update_data["email address"]
+                        line_split[5] = "user_email: " + update_data["email address"]
                         customer.user_email = update_data["email address"]
                     if "mobile number" in update_data:
-                        file_list[i+5] = "user_mobile: " + update_data["mobile number"]
+                        line_split[6] = "user_mobile: " + update_data["mobile number"] + "\n"
                         customer.user_mobile = update_data["mobile number"]
+                    line = ", ".join(line_split)
+                    file_list[i] = line
                     break
 
-            write_string = "\n".join(file_list)
+            write_string = "".join(file_list)
 
             with open("data/users.txt", "w", encoding='utf-8') as file:  # Open file to write
                 file.write(write_string)
@@ -133,17 +134,16 @@ class CustomerOperation:
         """
         try:
             with open("data/users.txt", "r", encoding='utf-8') as file:  # open file to read
-                file_list = [" ".join(line.split()) for line in file]
+                file_list = list(file)
                 found_customer = False
 
             for i, line in enumerate(file_list):
-                if line and line[9:] == customer_id:
+                if line and line[9:21] == customer_id:
                     found_customer = True
-                    for _ in range(i, i+8):
-                        del file_list[i]
+                    del file_list[i]
                     break
 
-            write_string = "\n".join(file_list)
+            write_string = "".join(file_list)
 
             with open("data/users.txt", "w", encoding='utf-8') as file:  # Open file to write
                 file.write(write_string)
@@ -168,3 +168,5 @@ class CustomerOperation:
         :return: None
         """
         pass
+
+

@@ -17,9 +17,8 @@ class User:
         self.user_role = user_role
 
     def __str__(self):
-        return f"user_id: {self.user_id}\n" \
-               f"user_name: {self.user_name}\n" \
-               f"user_password: {self.user_password}\n" \
-               f"user_register_time: {self.user_register_time}\n" \
-               f"user_role: {self.user_role}"
-
+        return (f"user_id: {self.user_id}, "
+                f"user_name: {self.user_name}, "
+                f"user_password: {self.user_password}, "
+                f"user_register_time: {self.user_register_time}, "
+                f"user_role: {self.user_role}")

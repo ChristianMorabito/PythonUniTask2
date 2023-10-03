@@ -15,7 +15,7 @@ class IOInterface:
     @staticmethod
     def main_menu():
         """ method displays login menu, i.e. login, register & quit """
-        print("__MAIN MENU__\n\n"
+        print("\n__MAIN MENU__\n\n"
               "(1) Login\n"
               "(2) Register\n"
               "(3) Quit\n")
@@ -27,14 +27,15 @@ class IOInterface:
         show orders, gen. test data, gen. all stat. figures, delete all data, & logout
         :return: None
         """
-        print("(1) Show products\n"
+        print("__ADMIN MENU__\n\n"
+              "(1) Show products\n"
               "(2) Add customers\n"
               "(3) Show customers\n"
               "(4) Show orders\n"
               "(5) Generate test data\n"
               "(6) Generate all statistical figures\n"
               "(7) Delete all data\n"
-              "(8) Logout")
+              "(8) Logout\n")
 
     @staticmethod
     def customer_menu():
@@ -43,7 +44,7 @@ class IOInterface:
         show history orders, gen. all consumption figures, logout.
         :return: None
         """
-        print("\n__CUSTOMER MENU__\n\n"
+        print("__CUSTOMER MENU__\n\n"
               "(1) Show profile\n"
               "(2) Update profile\n"
               "(3) Show products ('3 keyword' or '3')\n"
@@ -99,11 +100,14 @@ class IOInterface:
     @staticmethod
     def print_going_back():
         """ method that displays msg that user is going back to main menu"""
-        print("\nGoing back...\n")
+        print("\nGoing back...")
 
     @staticmethod
     def text_box(string):
-        vertical, horizontal = "║", "═"
+        string_to_list = string.split(", ")
+        string = "".join(
+            [line + "\n" if i < len(string_to_list) - 1 else line for i, line in enumerate(string_to_list)])
+        vertical, horizontal = "|", "-"
         max_len = local_len = 0
         temp_string = ""
         lines_list = []
@@ -118,11 +122,13 @@ class IOInterface:
                 local_len = 0
 
         for i in range(len(lines_list)):
-            lines_list[i] = lines_list[i][:-1] + (" " * (max_len - len(lines_list[i]) + 4)) + "║" + "\n"
+            lines_list[i] = lines_list[i][:-1] + (" " * (max_len - len(lines_list[i]) + 4)) + "|" + "\n"
 
-        top = "╔" + ("═" * (max_len + 2)) + "╗\n"
-        base = "╚" + ("═" * (max_len + 2)) + "╝\n"
+        top = "+" + ("-" * (max_len + 2)) + "+\n"
+        base = "+" + ("-" * (max_len + 2)) + "+"
         print(top + "".join(lines_list) + base)
+
+
 
     @staticmethod
     def show_list(user_role, list_type, object_list):
@@ -143,7 +149,7 @@ class IOInterface:
         :param error_message: accepts error_message str
         :return: None
         """
-        print(error_message, f"\t # ERROR_SOURCE → {error_source}\n")
+        print(error_message, f"\t # ERROR_SOURCE -> {error_source}\n")
 
     @staticmethod
     def print_message(message):

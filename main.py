@@ -2,6 +2,7 @@ from io_interface import IOInterface
 from operation_customer import CustomerOperation
 from operation_user import UserOperation
 from operation_product import ProductOperation
+from operation_admin import AdminOperation
 
 main_loop = True
 
@@ -81,17 +82,9 @@ def customer_control(user):
     logged_in = True
 
     input_msg = {1: "__PROFILE__", 2: "__UPDATE PROFILE__", 3: "__PRODUCTS__",
-                 4: "__HISTORY__", 5: "__FIGURES__", 6: "Logging out..."}
+                 4: "__HISTORY__", 5: "__FIGURES__", 6: "\nLogging out..."}
 
-    IOInterface.print_message("\nLoading store data...\n")
-
-    if not ProductOperation.extract_products_from_files():
-        IOInterface.print_error_message("operation_product.extract_products_from_files()",
-                                        "Error loading store data. Logging out...")
-        return
-    IOInterface.print_message("SUCCESS!! You are now logged in")
-
-
+    IOInterface.print_message("SUCCESS!! You are now logged in\n")
 
     while logged_in:
 
@@ -147,10 +140,17 @@ def login_control():
                                                        num_of_args=1)[0]  # returns p/w @ 0th index
             user_obj = UserOperation.login(user_name, user_password)
             if not user_obj or user_obj == 1:
-                IOInterface.print_error_message("UserOperation.login()",
-                                                "Unexpected error!" if user_obj == 1 else "Invalid details entered.")
+                IOInterface.print_error_message("UserOperation.login()", "\n" +
+                                                ("Unexpected error!" if user_obj == 1 else "Invalid details entered."))
                 return
-            customer_control(user_obj)
+
+            IOInterface.print_message("\nLoading store data...\n")
+            if not ProductOperation.extract_products_from_files():
+                IOInterface.print_error_message("operation_product.extract_products_from_files()",
+                                                "Error loading store data. Logging out...")
+                return
+
+            admin_control(user_obj) if user_obj.__class__.__name__ == "Admin" else customer_control(user_obj)
 
         elif choice == 2:  # user registers as new customer
             process_customer()
@@ -162,11 +162,56 @@ def login_control():
                                         "Enter only a number! Try again...")
 
 
-def admin_control():
-    pass
+def admin_control(user):
+
+    logged_in = True
+
+    input_msg = {1: "__SHOW PRODUCTS__", 2: "__ADD CUSTOMERS__", 3: "__SHOW CUSTOMERS__",
+                 4: "__SHOW ORDERS__", 5: "__GENERATE TEST DATA__", 6: "__ALL STATISTICS__",
+                 7: "__DELETE ALL DATA__", 8: "\nLogging out..."}
+
+    IOInterface.print_message("SUCCESS!! You are now logged in as ADMIN.\n")
+
+    while logged_in:
+
+        IOInterface.admin_menu()
+
+        try:
+            raw_choice, keyword = IOInterface.get_user_input("Enter: ", num_of_args=2)
+            choice = int(raw_choice[0])
+            if 0 < int(raw_choice) < 9:
+                IOInterface.print_message(input_msg[choice] + "\n")
+
+                if choice == 1:  # show products
+                    pass
+                elif choice == 2:  # add customers
+                    pass
+                elif choice == 3:  # show customers
+                    pass
+                elif choice == 4:  # show orders
+                    pass
+                elif choice == 5:  # generate test data
+                    pass
+                elif choice == 6:  # generate all statistical figures
+                    pass
+                elif choice == 7:  # delete all data
+                    pass
+                else:  # log out
+                    logged_in = False
+
+            else:
+                IOInterface.print_error_message("main.customer_control()",
+                                                "Input out of range! Try again...")
+
+        except ValueError:
+            IOInterface.print_error_message("main.customer_control()",
+                                            "Enter only a number! Try again...")
 
 
 def main():
+    if not AdminOperation.register_admin():
+        IOInterface.print_error_message("operation_admin.register_admin()",
+                                        "Error registering admin. Unable to login as admin")
     while main_loop:
         login_control()
 

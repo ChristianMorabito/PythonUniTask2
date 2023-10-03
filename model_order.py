@@ -14,9 +14,9 @@ class Order:
         self.order_time = order_time
 
     def __str__(self):
-        return f"order.id: {self.order_id}" \
-               f"user_id: {self.user_id}" \
-               f"prod_id: {self.prod_id}" \
-               f"order_time: {self.order_time}"
+        return (f"order.id: {self.order_id}, "
+                f"user_id: {self.user_id}, " 
+                f"prod_id: {self.prod_id}, " 
+                f"order_time: {self.order_time}")
 
 

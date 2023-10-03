@@ -4,8 +4,8 @@ import pandas as pd
 
 
 class ProductOperation:
-    len_products_txt = 1
-    page_amount = (len_products_txt // 10) + 1
+    len_products_txt = 0
+    pages_amount = 0
 
     @staticmethod
     def extract_products_from_files():
@@ -26,7 +26,10 @@ class ProductOperation:
                         likes_count = row["likes_count"]
                         w_file.write(Product(pro_id, model, category, name, current_price,
                                              raw_price, discount, likes_count).__str__() + "\n")
-            ProductOperation.len_products_txt = len(w_file.readlines())
+                        ProductOperation.len_products_txt += 1  # increment to get the len(products.txt)
+
+                # establish the amount of pages
+                ProductOperation.pages_amount = ProductOperation.len_products_txt // 10 + 1
 
         except FileNotFoundError or OSError:
             return False
@@ -51,10 +54,11 @@ class ProductOperation:
                         product_list.append(file[i])
                     elif i == stop:
                         break
+
         except FileNotFoundError or OSError:
             return None
 
-        return product_list, page_number, ProductOperation.page_amount
+        return product_list, page_number, ProductOperation.pages_amount
 
     @staticmethod
     def delete_product(product_id):
@@ -131,4 +135,3 @@ class ProductOperation:
         :return: None
         """
         pass
-

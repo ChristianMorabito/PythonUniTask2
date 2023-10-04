@@ -159,6 +159,3 @@ class UserOperation:
 
         return None
 
-
-UserOperation.login("admin", "admin1")
-

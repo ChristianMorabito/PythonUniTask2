@@ -1,5 +1,7 @@
+import os
 from io_interface import IOInterface
 from operation_customer import CustomerOperation
+from operation_order import OrderOperation
 from operation_user import UserOperation
 from operation_product import ProductOperation
 from operation_admin import AdminOperation
@@ -17,7 +19,7 @@ def customer_update(user):
             if choice and not (0 < int(choice) < 5):
                 IOInterface.print_error_message("main.customer_update()", "Input out of range!")
                 return  # escape function if input is out of range
-        except ValueError:
+        except ValueError or IndexError:
             IOInterface.print_error_message("main.customer_update()", "Enter only a number!")
             return  # escape function if input is not a value
 
@@ -114,7 +116,7 @@ def customer_control(user):
                 IOInterface.print_error_message("main.customer_control()",
                                                 "Input out of range! Try again...")
 
-        except ValueError:
+        except ValueError or IndexError:
             IOInterface.print_error_message("main.customer_control()",
                                             "Enter only a number! Try again...")
 
@@ -157,33 +159,52 @@ def login_control():
         elif choice == 3:
             main_loop = False
 
-    except ValueError:
+    except ValueError or IndexError:
         IOInterface.print_error_message("main.login_control()",
                                         "Enter only a number! Try again...")
 
 
-def admin_control(user):
+def admin_show_products():
+    if os.path.getsize("data/products.txt") == 0:
+        IOInterface.print_message("Unable to show products since products.txt is empty!")
+        return
+    while True:
+        try:
+            page_no = IOInterface.get_user_input(f"Enter a page no. between 1 & "
+                                                 f"{ProductOperation.pages_amount}\n"
+                                                 f"__type 'menu' to go back__: ", num_of_args=1)[0]
+            if page_no == "menu":
+                return
+            if 0 < int(page_no) <= ProductOperation.pages_amount:
+                product_list = ProductOperation.get_product_list(int(page_no))[0]
+                IOInterface.show_list(list_type=product_list)
+            else:
+                IOInterface.print_error_message("main.admin_show_products()",
+                                                "Input out of range! Try again...")
+        except ValueError or IndexError:
+            IOInterface.print_error_message("main.admin_show_products()", "Enter only a number! Try again...")
+
+
+def admin_control(user):  # TODO: does user arg need to be there?
 
     logged_in = True
 
     input_msg = {1: "__SHOW PRODUCTS__", 2: "__ADD CUSTOMERS__", 3: "__SHOW CUSTOMERS__",
-                 4: "__SHOW ORDERS__", 5: "__GENERATE TEST DATA__", 6: "__ALL STATISTICS__",
+                 4: "__SHOW ORDERS__", 5: "Generating test data...", 6: "__ALL STATISTICS__",
                  7: "__DELETE ALL DATA__", 8: "\nLogging out..."}
 
     IOInterface.print_message("SUCCESS!! You are now logged in as ADMIN.\n")
 
     while logged_in:
-
         IOInterface.admin_menu()
-
         try:
             raw_choice, keyword = IOInterface.get_user_input("Enter: ", num_of_args=2)
-            choice = int(raw_choice[0])
-            if 0 < int(raw_choice) < 9:
-                IOInterface.print_message(input_msg[choice] + "\n")
+            choice = int(raw_choice)
+            if 0 < choice < 9:
+                IOInterface.print_message("\n" + input_msg[choice] + "\n")
 
                 if choice == 1:  # show products
-                    pass
+                    admin_show_products()
                 elif choice == 2:  # add customers
                     pass
                 elif choice == 3:  # show customers
@@ -191,11 +212,22 @@ def admin_control(user):
                 elif choice == 4:  # show orders
                     pass
                 elif choice == 5:  # generate test data
-                    pass
+                    test_data = OrderOperation.generate_test_order_data()
+                    if not test_data:
+                        IOInterface.print_error_message("operation_order.generation_test_order_data()",
+                                                        "Unable to generate test data!")
+                    else:
+                        IOInterface.print_message("Test data has been generated.\n")
                 elif choice == 6:  # generate all statistical figures
                     pass
                 elif choice == 7:  # delete all data
-                    pass
+                    if (CustomerOperation.delete_all_customers() and
+                            OrderOperation.delete_all_orders() and
+                            ProductOperation.delete_all_products()):
+                        IOInterface.print_message("All data has been deleted.\n")
+                    else:
+                        IOInterface.print_error_message("operation_{product, order & customer}.delete_all...()",
+                                                        "Unable to delete all data!")
                 else:  # log out
                     logged_in = False
 
@@ -203,7 +235,7 @@ def admin_control(user):
                 IOInterface.print_error_message("main.customer_control()",
                                                 "Input out of range! Try again...")
 
-        except ValueError:
+        except ValueError or IndexError:
             IOInterface.print_error_message("main.customer_control()",
                                             "Enter only a number! Try again...")
 

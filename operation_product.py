@@ -69,6 +69,7 @@ class ProductOperation:
         :return: returns bool based on success
         """
         pass
+    # TODO: make sure you decrement products_txt_len & pages_no
 
     @staticmethod
     def get_product_list_by_keyword(keyword):
@@ -132,6 +133,11 @@ class ProductOperation:
     def delete_all_products():
         """
         method removes all the product data in the data/products.txt file
-        :return: None
+        :return: returns bool based on success
         """
-        pass
+        try:
+            with open("data/products.txt", "w", encoding="utf-8") as file:
+                file.truncate(0)
+        except FileNotFoundError or OSError:
+            return False
+        return True

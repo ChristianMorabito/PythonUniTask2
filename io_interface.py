@@ -9,8 +9,11 @@ class IOInterface:
         :return: returns [“arg1”, “arg2”, “arg3”]. If no. of input args is < num_of_args,
                  return the rest as empty str “”
         """
-        arg_list = input(message).split()
-        return [arg_list[i] if i < len(arg_list) else "" for i in range(num_of_args)]
+        try:
+            arg_list = input(message).split()
+            return [arg_list[i] if i < len(arg_list) else "" for i in range(num_of_args)]
+        except IndexError:
+            return
 
     @staticmethod
     def main_menu():
@@ -128,18 +131,39 @@ class IOInterface:
         base = "+" + ("-" * (max_len + 2)) + "+"
         print(top + "".join(lines_list) + base)
 
-
-
     @staticmethod
-    def show_list(user_role, list_type, object_list):
+    def show_list(user_role=None, list_type=None, object_list=None):
         """
         method prints diff. types of list, i.e. customer, product, or order.
         :param user_role: accepts user_role str
         :param list_type: accepts list_type str
         :param object_list: accepts list of objects
-        :return: None
         """
-        pass
+        print("\n")
+        def string_to_list(string):
+            result = []
+            current = ""
+            flag = False
+
+            for char in string:
+                if char == '"':
+                    flag = not flag
+                elif char == "," and not flag:
+                    result.append(current.strip())
+                    current = ""
+                else:
+                    current += char
+
+            result.append(current.strip())
+
+            string = "\n".join(result) + "\n"
+            print(string)
+
+        if list_type:
+            for line in list_type:
+                string_to_list(line)
+        # print(user_role if True else ("\n".join(list_type) if True else object_list))
+
 
     @staticmethod
     def print_error_message(error_source, error_message):

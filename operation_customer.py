@@ -1,5 +1,6 @@
 import re
 import time
+import os
 from model_customer import Customer
 from operation_user import UserOperation
 
@@ -67,7 +68,7 @@ class CustomerOperation:
             with open("data/users.txt", "a", encoding='utf-8') as file:
                 user_id = UserOperation.generate_unique_user_id()
                 if user_id == "-1":
-                    return False
+                    return None
 
                 user_time = time.strftime("%d-%m-%Y_%H:%M:%S") if not r_time else r_time
                 encrypted_pw = UserOperation.encrypt_password(user_password)
@@ -76,9 +77,9 @@ class CustomerOperation:
                     user_email=user_email, user_mobile=user_mobile).__str__() + "\n")
 
         except FileNotFoundError or OSError:
-            return False
+            return None
 
-        return True
+        return user_id
 
     @staticmethod
     def update_profile(update_data, customer):
@@ -131,7 +132,9 @@ class CustomerOperation:
         :return: returns bool depending on success
         """
         try:
-            with open("data/users.txt", "r", encoding='utf-8') as file:  # open file to read
+            if os.path.getsize("data/users.txt") == 0:
+                return False
+            with open("data/users.txt", "r", encoding='utf-8') as file:
                 file_list = list(file)
                 found_customer = False
 
@@ -163,8 +166,13 @@ class CustomerOperation:
     def delete_all_customers():
         """
         Method to remove all customers from the data/users.txt file
-        :return: None
+        :return: returns bool based on success
         """
-        pass
+        try:
+            with open("data/users.txt", "w", encoding="utf-8") as file:
+                file.truncate(0)
+        except FileNotFoundError or OSError:
+            return False
+        return True
 
 

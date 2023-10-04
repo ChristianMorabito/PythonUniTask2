@@ -167,6 +167,10 @@ def show(path, pages_amount, get_list_function):
     if os.path.getsize(path) == 0:
         IOInterface.print_message("Unable to show contents since file is empty!")
         return
+    if path == "data/users.txt" and CustomerOperation.len_users_txt == 1:
+        # admin is not a customer, so if only admin in the customer list, then the list is considered empty
+        IOInterface.print_message("Unable to show contents since file is empty!")
+        return
     while True:
         try:
             page_no = IOInterface.get_user_input(f"Enter a page no. between 1 & "
@@ -210,7 +214,7 @@ def admin_control(user):  # TODO: does user arg need to be there?
                 elif choice == 3:  # show customers
                     show("data/users.txt", CustomerOperation.pages_amount, CustomerOperation.get_customer_list)
                 elif choice == 4:  # show orders
-                    pass
+                    show("data/orders.txt", OrderOperation.pages_amount, OrderOperation.get_order_list)
                 elif choice == 5:  # generate test data
                     if ProductOperation.len_products_txt == 0:
                         IOInterface.print_message("\nLoading store data...\n")

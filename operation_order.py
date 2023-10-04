@@ -76,7 +76,7 @@ class OrderOperation:
         OrderOperation.pages_amount = OrderOperation.len_order_txt // 10 + 1
 
     @staticmethod
-    def get_order_list(customer_id, page_number):
+    def get_order_list(page_number=None, customer_id=None):
         """
         method retrieves 1 pg of orders from dBase which belongs
         to the given customer. 1 page contains a max of 10 items.
@@ -85,7 +85,24 @@ class OrderOperation:
         :return: returns tuple inc. list of order objects & total no. of pages.
                  e.g. ([Order(),Order(),Order()...],page_number,total_page).
         """
-        pass
+        try:
+            with open("data/orders.txt", "r", encoding="utf-8") as file:
+
+                if page_number < 1:
+                    return None
+                file = list(file)
+                start, stop = (page_number * 10) - 10, page_number * 10
+                order_list = []
+                for i in range(len(file)):
+                    if start <= i < stop:
+                        order_list.append(file[i])
+                    elif i == stop:
+                        break
+
+        except FileNotFoundError or OSError:
+            return None
+
+        return order_list, page_number, OrderOperation.pages_amount
 
     @staticmethod
     def generate_test_order_data():

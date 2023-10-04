@@ -30,7 +30,7 @@ class IOInterface:
         show orders, gen. test data, gen. all stat. figures, delete all data, & logout
         :return: None
         """
-        print("__ADMIN MENU__\n\n"
+        print("\n__ADMIN MENU__\n\n"
               "(1) Show products\n"
               "(2) Add customers\n"
               "(3) Show customers\n"
@@ -129,7 +129,7 @@ class IOInterface:
 
         top = "+" + ("-" * (max_len + 2)) + "+\n"
         base = "+" + ("-" * (max_len + 2)) + "+"
-        print(top + "".join(lines_list) + base)
+        print(top + "".join(lines_list) + base + "\n")
 
     @staticmethod
     def show_list(user_role=None, list_type=None, object_list=None):

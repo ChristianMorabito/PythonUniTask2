@@ -96,8 +96,7 @@ def customer_control(user):
             raw_choice, keyword = IOInterface.get_user_input("Enter: ", num_of_args=2)
             choice = int(raw_choice[0])
             if 0 < int(raw_choice) < 7:
-                IOInterface.print_message(input_msg[choice] + "\n")
-
+                IOInterface.print_message("\n" + input_msg[choice] + "\n")
                 if choice == 1:  # show profile
                     IOInterface.text_box(user.__str__())
                 elif choice == 2:  # update profile
@@ -164,25 +163,26 @@ def login_control():
                                         "Enter only a number! Try again...")
 
 
-def admin_show_products():
-    if os.path.getsize("data/products.txt") == 0:
-        IOInterface.print_message("Unable to show products since products.txt is empty!")
+def show(path, pages_amount, get_list_function):
+    if os.path.getsize(path) == 0:
+        IOInterface.print_message("Unable to show contents since file is empty!")
         return
     while True:
         try:
             page_no = IOInterface.get_user_input(f"Enter a page no. between 1 & "
-                                                 f"{ProductOperation.pages_amount}\n"
+                                                 f"{pages_amount}\n"
                                                  f"__type 'menu' to go back__: ", num_of_args=1)[0]
             if page_no == "menu":
                 return
-            if 0 < int(page_no) <= ProductOperation.pages_amount:
-                product_list = ProductOperation.get_product_list(int(page_no))[0]
+            if 0 < int(page_no) <= pages_amount:
+                product_list = get_list_function(int(page_no))[0]
                 IOInterface.show_list(list_type=product_list)
             else:
-                IOInterface.print_error_message("main.admin_show_products()",
+                IOInterface.print_error_message("main.admin_show()",
                                                 "Input out of range! Try again...")
         except ValueError or IndexError:
-            IOInterface.print_error_message("main.admin_show_products()", "Enter only a number! Try again...")
+            IOInterface.print_error_message("main.admin_show()",
+                                            "Enter only a number! Try again...")
 
 
 def admin_control(user):  # TODO: does user arg need to be there?
@@ -204,18 +204,21 @@ def admin_control(user):  # TODO: does user arg need to be there?
                 IOInterface.print_message("\n" + input_msg[choice] + "\n")
 
                 if choice == 1:  # show products
-                    admin_show_products()
+                    show("data/products.txt", ProductOperation.pages_amount, ProductOperation.get_product_list)
                 elif choice == 2:  # add customers
                     pass
                 elif choice == 3:  # show customers
-                    pass
+                    show("data/users.txt", CustomerOperation.pages_amount, CustomerOperation.get_customer_list)
                 elif choice == 4:  # show orders
                     pass
                 elif choice == 5:  # generate test data
+                    if ProductOperation.len_products_txt == 0:
+                        IOInterface.print_message("\nLoading store data...\n")
                     test_data = OrderOperation.generate_test_order_data()
                     if not test_data:
                         IOInterface.print_error_message("operation_order.generation_test_order_data()",
-                                                        "Unable to generate test data!")
+                                                        "Unable to generate test data!" if type(test_data) == bool
+                                                        else "Test data already generated!")
                     else:
                         IOInterface.print_message("Test data has been generated.\n")
                 elif choice == 6:  # generate all statistical figures

@@ -5,7 +5,7 @@ import pandas as pd
 
 class ProductOperation:
     len_products_txt = 0
-    pages_amount = 0
+    pages_amount = 1
 
     @staticmethod
     def extract_products_from_files():
@@ -68,14 +68,14 @@ class ProductOperation:
         :param product_id: accepts product_id str
         :return: returns bool based on success
         """
-        pass
-    # TODO: make sure you decrement products_txt_len & pages_no
+        ProductOperation.len_products_txt -= 1
+        ProductOperation.pages_amount = ProductOperation.len_products_txt // 10 + 1
 
     @staticmethod
     def get_product_list_by_keyword(keyword):
         """
         method to retrieve all products whose name
-        contains the keyword (case sensitive)
+        contains the keyword (case-sensitive)
         :param keyword: accepts keyword as str
         :return: returns list of products
         """
@@ -138,6 +138,8 @@ class ProductOperation:
         try:
             with open("data/products.txt", "w", encoding="utf-8") as file:
                 file.truncate(0)
+                ProductOperation.len_products_txt = 1
+                ProductOperation.pages_amount = 1
         except FileNotFoundError or OSError:
             return False
         return True

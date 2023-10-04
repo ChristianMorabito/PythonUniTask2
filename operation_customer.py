@@ -1,11 +1,15 @@
 import re
 import time
 import os
+
+from model_admin import Admin
 from model_customer import Customer
 from operation_user import UserOperation
 
 
 class CustomerOperation:
+    len_users_txt = 1  # will always be at least 1 because admin is always there
+    pages_amount = 1
 
     @staticmethod
     def validate_email(user_email):
@@ -75,6 +79,8 @@ class CustomerOperation:
                 file.write(Customer(
                     user_id, user_name, encrypted_pw, user_time,
                     user_email=user_email, user_mobile=user_mobile).__str__() + "\n")
+            CustomerOperation.len_users_txt += 1
+            CustomerOperation.pages_amount = CustomerOperation.len_users_txt // 10 + 1
 
         except FileNotFoundError or OSError:
             return None
@@ -146,8 +152,12 @@ class CustomerOperation:
 
             write_string = "".join(file_list)
 
-            with open("data/users.txt", "w", encoding='utf-8') as file:  # Open file to write
-                file.write(write_string)
+            if found_customer:
+                with open("data/users.txt", "w", encoding='utf-8') as file:  # Open file to write
+                    file.write(write_string)
+                CustomerOperation.len_users_txt -= 1
+                CustomerOperation.pages_amount = CustomerOperation.len_users_txt // 10 + 1
+
 
         except FileNotFoundError or OSError:
             return False
@@ -160,7 +170,25 @@ class CustomerOperation:
         :param page_number: accepts page_number int
         :return: returns tuple, e.g. ([Customer1,Customer2,...,Customer10], page_no, total_page)
         """
-        pass
+        try:
+            with open("data/users.txt", "r", encoding="utf-8") as file:
+
+                if page_number < 1:
+                    return None
+                file = list(file)
+                start, stop = (page_number * 10) - 10, page_number * 10
+                product_list = []
+                for i in range(len(file)):
+                    if start <= i < stop:
+                        product_list.append(file[i])
+                    elif i == stop:
+                        break
+
+        except FileNotFoundError or OSError:
+            return None
+
+        return product_list, page_number, CustomerOperation.pages_amount
+
 
     @staticmethod
     def delete_all_customers():
@@ -171,6 +199,10 @@ class CustomerOperation:
         try:
             with open("data/users.txt", "w", encoding="utf-8") as file:
                 file.truncate(0)
+                encrypted_pw = UserOperation.encrypt_password(Admin.__init__.__defaults__[2])
+                file.write(Admin(user_password=encrypted_pw).__str__() + "\n")
+                CustomerOperation.len_users_txt = 1
+                CustomerOperation.pages_amount = 1
         except FileNotFoundError or OSError:
             return False
         return True

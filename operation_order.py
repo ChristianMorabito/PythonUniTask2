@@ -8,6 +8,8 @@ from operation_user import UserOperation
 
 
 class OrderOperation:
+    len_order_txt = 0
+    pages_amount = 1
 
     @staticmethod
     def generate_unique_order_id():
@@ -54,6 +56,8 @@ class OrderOperation:
 
                 create_time = time.strftime("%d-%m-%Y_%H:%M:%S") if not create_time else create_time
                 file.write(Order(order_id, customer_id, product_id, create_time).__str__() + "\n")
+                OrderOperation.len_order_txt += 1
+                OrderOperation.pages_amount = OrderOperation.len_order_txt // 10 + 1
 
         except FileNotFoundError or OSError:
             return False
@@ -68,7 +72,8 @@ class OrderOperation:
         :param order_id: accepts order_id str
         :return: returns bool based on success
         """
-        pass
+        OrderOperation.len_order_txt -= 1
+        OrderOperation.pages_amount = OrderOperation.len_order_txt // 10 + 1
 
     @staticmethod
     def get_order_list(customer_id, page_number):
@@ -88,9 +93,11 @@ class OrderOperation:
         method to automatically generate test data
         :return: returns bool based on success
         """
+        if ProductOperation.len_products_txt == 0:
+            ProductOperation.extract_products_from_files()
         name = ["chris_m", "jack_p", "bob_l", "jazz_f", "andrea_v", "hans_j", "sam_j", "mike_l", "luke_s", "patches_a"]
         if UserOperation.check_username_exist(name[0]):
-            return False
+            return 0
         pw = ["Apple1", "Badger5", "toiLet2", "Bucky8", "Cherry6", "Elf45", "Meat6", "Badger1", "Yucky1", "Glue9"]
         email = ["chris_m@gmail.com", "jack_p@gmail.com", "bob_l@gmail.com", "jazz_f@gmail.com", "andrea_v@gmail.com",
                  "hans_j@gmail.com", "sam_j@gmail.com", "mike_l@gmail.com", "luke_s@gmail.com", "patches_a@gmail.com"]
@@ -105,22 +112,43 @@ class OrderOperation:
         user_id_list = [CustomerOperation.register_customer(
             users["name"][i], users["pw"][i], users["email"][i],
             users["mobile"][i], users["r_time"][i]) for i in range(len(name))]
+
         if not user_id_list or None in user_id_list:
             return False
 
+        return OrderOperation.generate_test_purchases(name)
+
+    @staticmethod
+    def generate_test_purchases(name_list):
+        """
+        method to generate test purchase orders
+        :param name_list: accepts list of names
+        :return: returns bool based on success
+        """
+        r_order_amount = [r.randint(50, 200) for _ in range(len(name_list))]
+        total_order_amount = sum(r_order_amount)
         seconds_in_a_year = 31536000
-        month = "01"
-        for user_id in user_id_list:
-            order_amount = r.randint(50, 200)
-            product_index_list, timestamp_list = [], []
-            month = str(int(month) + 1).zfill(len(month))
-            OrderOperation.generate_random_product_list(order_amount, product_index_list)
-            OrderOperation.generate_random_time(timestamp_list, seconds_in_a_year // order_amount,
-                                                f"01-{month}-2020_00:00:00", order_amount, False)
-            for j in range(order_amount):
-                if not OrderOperation.create_an_order(user_id, product_index_list[j], timestamp_list[j]):
-                    return False
+        advance = seconds_in_a_year // total_order_amount
+        timestamps, product_indexes = [], []
+        OrderOperation.generate_random_product_list(total_order_amount, product_indexes)
+        OrderOperation.generate_random_time(timestamps, advance,
+                                            "01-01-2022_00:00:00", total_order_amount)
+
+        user_order_dict = {name_list[i]: r_order_amount[i] for i in range(len(name_list))}
+        to_delete = set()
+        for i in range(total_order_amount):
+            if len(to_delete) > 0:
+                user_order_dict = {name_list[j]: r_order_amount[j]
+                                   for j in range(len(name_list)) if name_list[j] not in to_delete}
+                to_delete.clear()
+            if not OrderOperation.create_an_order(name_list[i % len(name_list)], product_indexes[i], timestamps[i]):
+                return False
+            user_order_dict[name_list[i % len(name_list)]] -= 1
+            if user_order_dict[name_list[i % len(name_list)]] == 0:
+                to_delete.add(name_list[i % len(name_list)])
+                del name_list[i % len(name_list)]
         return True
+
 
     @staticmethod
     def generate_random_product_list(amount, product_index_list):
@@ -193,6 +221,8 @@ class OrderOperation:
         try:
             with open("data/orders.txt", "w", encoding="utf-8") as file:
                 file.truncate(0)
+                OrderOperation.len_order_txt = 0
+                OrderOperation.pages_amount = 1
         except FileNotFoundError or OSError:
             return False
         return True

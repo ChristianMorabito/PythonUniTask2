@@ -10,13 +10,17 @@ class ProductOperation:
     @staticmethod
     def extract_products_from_files():
         """ Method to extract product info from the given product data file """
+        data_set = set()
         try:
             files = os.listdir("product")
             with open("data/products.txt", "w", encoding='utf-8') as w_file:
                 for file_name in files:
                     df = pd.read_csv("product/" + file_name)
-                    for _, row in df.iterrows():
+                    for i, row in df.iterrows():
                         pro_id = row["id"]
+                        if pro_id in data_set:  # add product ids into set to skip over duplicates
+                            continue
+                        data_set.add(pro_id)
                         model = row["model"]
                         category = row["category"]
                         name = row["name"]

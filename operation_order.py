@@ -110,7 +110,7 @@ class OrderOperation:
         method to automatically generate test data
         :return: returns bool based on success
         """
-        if ProductOperation.len_products_txt == 0:
+        if ProductOperation.len_products_txt < 2:  # TODO: LOOK AT THIS. WHY 2?
             ProductOperation.extract_products_from_files()
         name = ["chris_m", "jack_p", "bob_l", "jazz_f", "andrea_v", "hans_j", "sam_j", "mike_l", "luke_s", "patches_a"]
         if UserOperation.check_username_exist(name[0]):
@@ -147,6 +147,7 @@ class OrderOperation:
         seconds_in_a_year = 31536000
         advance = seconds_in_a_year // total_order_amount
         timestamps, product_indexes = [], []
+
         OrderOperation.generate_random_product_list(total_order_amount, product_indexes)
         OrderOperation.generate_random_time(timestamps, advance,
                                             "01-01-2022_00:00:00", total_order_amount)

@@ -88,12 +88,19 @@ class OrderOperation:
         try:
             with open("data/orders.txt", "r", encoding="utf-8") as file:
                 order_list = []
-                UserOperation.traverse_pages(order_list, page_number, file)
+                if page_number:
+                    UserOperation.traverse_pages(order_list, page_number, file)
+                else:
+                    file_list = list(file)
+                    result = []
+                    for line in file_list:
+                        if line[28:40] == customer_id:
+                            result.append(line)
 
         except FileNotFoundError or OSError:
             return None
 
-        return order_list, page_number, OrderOperation.pages_amount
+        return (order_list, page_number, OrderOperation.pages_amount) if page_number else result
 
     @staticmethod
     def generate_test_order_data():
@@ -124,16 +131,16 @@ class OrderOperation:
         if not user_id_list or None in user_id_list:
             return False
 
-        return OrderOperation.generate_test_purchases(name)
+        return OrderOperation.generate_test_purchases(user_id_list)
 
     @staticmethod
-    def generate_test_purchases(name_list):
+    def generate_test_purchases(user_id_list):
         """
         method to generate test purchase orders
-        :param name_list: accepts list of names
+        :param user_id_list: accepts list of user_ids
         :return: returns bool based on success
         """
-        r_order_amount = [r.randint(50, 200) for _ in range(len(name_list))]
+        r_order_amount = [r.randint(50, 200) for _ in range(len(user_id_list))]
         total_order_amount = sum(r_order_amount)
         seconds_in_a_year = 31536000
         advance = seconds_in_a_year // total_order_amount
@@ -143,20 +150,20 @@ class OrderOperation:
         OrderOperation.generate_random_time(timestamps, advance,
                                             "01-01-2022_00:00:00", total_order_amount)
 
-        user_order_dict = {name_list[i]: r_order_amount[i] for i in range(len(name_list))}
+        user_order_dict = {user_id_list[i]: r_order_amount[i] for i in range(len(user_id_list))}
         to_delete = set()
         for i in range(total_order_amount):
             if len(to_delete) > 0:
-                user_order_dict = {name_list[j]: user_order_dict[name_list[j]]
-                                   for j in range(len(name_list)) if name_list[j] not in to_delete}
+                user_order_dict = {user_id_list[j]: user_order_dict[user_id_list[j]]
+                                   for j in range(len(user_id_list)) if user_id_list[j] not in to_delete}
                 to_delete.clear()
-            if not OrderOperation.create_an_order(name_list[i % len(name_list)], product_indexes[i], timestamps[i]):
+            if not OrderOperation.create_an_order(user_id_list[i % len(user_id_list)], product_indexes[i], timestamps[i]):
                 return False
-            user_order_dict[name_list[i % len(name_list)]] -= 1
-            if user_order_dict[name_list[i % len(name_list)]] == 0:
-                to_delete.add(name_list[i % len(name_list)])
-                del name_list[i % len(name_list)]
-            r.shuffle(name_list)  # shuffle names in list, so there isn't a pattern of names in orders.txt
+            user_order_dict[user_id_list[i % len(user_id_list)]] -= 1
+            if user_order_dict[user_id_list[i % len(user_id_list)]] == 0:
+                to_delete.add(user_id_list[i % len(user_id_list)])
+                del user_id_list[i % len(user_id_list)]
+            r.shuffle(user_id_list)  # shuffle id_s in list, so there isn't a pattern of id_s in orders.txt
         return True
 
     @staticmethod

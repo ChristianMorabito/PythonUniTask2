@@ -118,10 +118,10 @@ class ProductOperation:
 
                     word_list = line[left+11:right].split()
                     for word in word_list:
-                        if word in word_dict:
-                            word_dict[word].append(i)
+                        if word.lower() in word_dict:
+                            word_dict[word.lower()].append(i)
                         else:
-                            word_dict[word] = [i]
+                            word_dict[word.lower()] = [i]
 
                 if keyword in word_dict:
                     for i, num in enumerate(word_dict[keyword]):
@@ -141,7 +141,33 @@ class ProductOperation:
         :param product_id: accepts product_id as str
         :return: returns product object or None if cannot be found
         """
-        pass
+        try:
+            with open("data/products.txt", "r", encoding="utf-8") as file:
+                file_list = list(file)
+                id_dict = {}
+                result_list = []
+                for i, line in enumerate(file_list):
+                    for j, char in enumerate(line):
+                        if char == ",":
+                            word = line[8:j]
+                            for left in range(len(word) + 1):
+                                for right in range(left, len(word)):
+                                    if int(word[left:right + 1]) in id_dict:
+                                        id_dict[int(word[left:right + 1])].add(i)
+                                    else:
+                                        id_dict[int(word[left:right + 1])] = set()
+                                        id_dict[int(word[left:right + 1])].add(i)
+                            break
+
+                if int(product_id) in id_dict:
+                    for num in id_dict[int(product_id)]:
+                        result_list.append(file_list[num])
+                        if len(result_list) == 50:
+                            break
+
+        except FileNotFoundError or OSError:
+            return None
+        return result_list
 
     @staticmethod
     def generate_category_figure():
@@ -196,4 +222,3 @@ class ProductOperation:
         except FileNotFoundError or OSError:
             return False
         return True
-

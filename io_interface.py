@@ -50,7 +50,7 @@ class IOInterface:
         print("\n__CUSTOMER MENU__\n\n"
               "(1) Show profile\n"
               "(2) Update profile\n"
-              "(3) Show products ('3 keyword' or '3')\n"
+              "(3) Show products ('3' OR '3 keyword' OR '3 ID')\n"
               "(4) Show history orders\n"
               "(5) Generate all consumption figures\n"
               "(6) Logout\n")
@@ -161,7 +161,7 @@ class IOInterface:
         if list_type:
             if type(list_type) == list:
                 for line in list_type:
-                    print(line)
+                    print(line, end="")
                 return
 
             universal_list, page_no, pages_amount = list_type

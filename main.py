@@ -84,9 +84,9 @@ def customer_control(user):
     logged_in = True
 
     input_msg = {1: "__PROFILE__", 2: "__UPDATE PROFILE__", 3: "__PRODUCTS__",
-                 4: "__HISTORY__", 5: "__FIGURES__", 6: "\nLogging out..."}
+                 4: "__ORDER HISTORY__", 5: "__FIGURES__", 6: "\nLogging out..."}
 
-    IOInterface.print_message("SUCCESS!! You are now logged in\n")
+    IOInterface.print_message("SUCCESS!! You are now logged in.")
 
     while logged_in:
 
@@ -106,7 +106,8 @@ def customer_control(user):
                     show("data/products.txt", ProductOperation.pages_amount,
                          ProductOperation.get_product_list, None if not keyword else keyword)
                 elif choice == 4:  # show history orders
-                    pass
+                    show("data/orders.txt", None,
+                         OrderOperation.get_order_list, user.user_id)
                 elif choice == 5:  # generate all consumption figures
                     pass
                 else:  # log out
@@ -186,8 +187,25 @@ def show(path, pages_amount, get_list_function, keyword=None):
         # admin is not a customer, so if only admin in the customer list, then the list is considered empty
         IOInterface.print_message("Unable to show contents since file is empty!")
         return
-    if keyword:  # customer pathway
-        IOInterface.show_list(list_type=ProductOperation.get_product_list_by_keyword(keyword))
+    if keyword:  # customer pathway for if player wants a keyword search or to check their order history
+        if keyword[:2] == "u_":
+            customer_order_list = OrderOperation.get_order_list(customer_id=keyword)
+            IOInterface.show_list(list_type=customer_order_list)
+            IOInterface.print_message("\nYou have made " + str(len(customer_order_list)) +
+                                      (" orders" if len(customer_order_list) == 1 else " order") + " so far.")
+        elif keyword.isdigit():
+            if len(keyword) < 8:
+                IOInterface.print_message(f"Searching through IDs...\n")
+                id_list = ProductOperation.get_product_by_id(keyword)
+                IOInterface.show_list(list_type=id_list)
+                IOInterface.print_message("\nID search exceeded limit! Try a longer number" if len(id_list) == 50
+                                          else f"\n{len(id_list)} instances of {keyword} found.")
+            else:
+                IOInterface.print_message("ID input is too long. largest ID is 7 digits long.")
+        else:
+            keyword_list = ProductOperation.get_product_list_by_keyword(keyword.lower())
+            IOInterface.print_message(f"There are {len(keyword_list)} instances of the word {keyword}.")
+            IOInterface.show_list(list_type=keyword_list)
         return
 
     while True:

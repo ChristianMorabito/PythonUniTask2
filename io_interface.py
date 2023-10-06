@@ -47,7 +47,7 @@ class IOInterface:
         show history orders, gen. all consumption figures, logout.
         :return: None
         """
-        print("__CUSTOMER MENU__\n\n"
+        print("\n__CUSTOMER MENU__\n\n"
               "(1) Show profile\n"
               "(2) Update profile\n"
               "(3) Show products ('3 keyword' or '3')\n"
@@ -139,7 +139,6 @@ class IOInterface:
         :param list_type: accepts list_type str
         :param object_list: accepts list of objects
         """
-        print("\n")
         def string_to_list(string):
             result = []
             current = ""
@@ -156,13 +155,22 @@ class IOInterface:
 
             result.append(current.strip())
 
-            string = "\n".join(result) + "\n"
+            string = "\n" + "\n".join(result) + "\n"
             print(string)
 
         if list_type:
-            for line in list_type:
+            if type(list_type) == list:
+                for line in list_type:
+                    print(line)
+                return
+
+            universal_list, page_no, pages_amount = list_type
+            for line in universal_list:
                 string_to_list(line)
-        # print(user_role if True else ("\n".join(list_type) if True else object_list))
+            if len(universal_list) == 0:
+                print()  # add new line
+            print(("____END OF FILE____" if pages_amount == page_no else f"____END OF PAGE {page_no}____") + "\n")
+
 
 
     @staticmethod

@@ -1,7 +1,6 @@
 import re
 import time
 import os
-
 from model_admin import Admin
 from model_customer import Customer
 from operation_user import UserOperation
@@ -158,7 +157,6 @@ class CustomerOperation:
                 CustomerOperation.len_users_txt -= 1
                 CustomerOperation.pages_amount = CustomerOperation.len_users_txt // 10 + 1
 
-
         except FileNotFoundError or OSError:
             return False
         return found_customer
@@ -172,23 +170,29 @@ class CustomerOperation:
         """
         try:
             with open("data/users.txt", "r", encoding="utf-8") as file:
-
-                if page_number < 1:
-                    return None
-                file = list(file)
-                start, stop = (page_number * 10) - 10, page_number * 10
-                product_list = []
-                for i in range(len(file)):
-                    if start <= i < stop:
-                        product_list.append(file[i])
-                    elif i == stop:
-                        break
+                customer_list = []
+                UserOperation.traverse_pages(customer_list, page_number, file)
 
         except FileNotFoundError or OSError:
             return None
 
-        return product_list, page_number, CustomerOperation.pages_amount
+        return customer_list, page_number, CustomerOperation.pages_amount
 
+    @staticmethod
+    def set_len_and_pages():
+        """ method to set the len_users_txt & pages_amount without writing to the users.txt file """
+        try:
+            with open("data/users.txt", "r", encoding='utf-8') as file:
+                CustomerOperation.len_users_txt = len(list(file))
+                CustomerOperation.set_pages_amount()
+        except FileNotFoundError or OSError or IndexError:
+            return False
+        return True
+
+    @staticmethod
+    def set_pages_amount():
+        """ Method to establish the amount of pages in a file, i.e. 1 page = 10 lines of txt """
+        CustomerOperation.pages_amount = CustomerOperation.len_users_txt // 10 + 1
 
     @staticmethod
     def delete_all_customers():
@@ -201,7 +205,7 @@ class CustomerOperation:
                 file.truncate(0)
                 encrypted_pw = UserOperation.encrypt_password(Admin.__init__.__defaults__[2])
                 file.write(Admin(user_password=encrypted_pw).__str__() + "\n")
-                CustomerOperation.len_users_txt = 1
+                CustomerOperation.len_users_txt = 1  # this accounts for the admin who will always be there
                 CustomerOperation.pages_amount = 1
         except FileNotFoundError or OSError:
             return False

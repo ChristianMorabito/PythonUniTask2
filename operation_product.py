@@ -2,6 +2,8 @@ import os
 from model_product import Product
 import pandas as pd
 
+from operation_user import UserOperation
+
 
 class ProductOperation:
     len_products_txt = 0
@@ -10,8 +12,12 @@ class ProductOperation:
     @staticmethod
     def extract_products_from_files():
         """ Method to extract product info from the given product data file """
-        data_set = set()
         try:
+            # if products.txt already written, then just set the len_products_txt & pages_amount numbers
+            # without bothering to write products.txt again
+            if os.path.getsize("data/products.txt") > 0:
+                return ProductOperation.set_len_and_pages()
+            data_set = set()
             files = os.listdir("product")
             with open("data/products.txt", "w", encoding='utf-8') as w_file:
                 for file_name in files:
@@ -40,6 +46,22 @@ class ProductOperation:
         return True
 
     @staticmethod
+    def set_len_and_pages():
+        """ method to set the len_products_txt & pages_amount without writing to the products.txt file """
+        try:
+            with open("data/products.txt", "r", encoding='utf-8') as file:
+                ProductOperation.len_products_txt = len(list(file))
+                ProductOperation.set_pages_amount()
+        except FileNotFoundError or OSError or IndexError:
+            return False
+        return True
+
+    @staticmethod
+    def set_pages_amount():
+        """ Method to establish the amount of pages in a file, i.e. 1 page = 10 lines of txt """
+        ProductOperation.pages_amount = ProductOperation.len_products_txt // 10 + 1
+
+    @staticmethod
     def get_product_list(page_number):
         """
         method which retrieves one page of products from the database
@@ -48,16 +70,8 @@ class ProductOperation:
         """
         try:
             with open("data/products.txt", "r", encoding="utf-8") as file:
-                if page_number < 1:
-                    return None
-                file = list(file)
-                start, stop = (page_number * 10) - 10, page_number * 10
                 product_list = []
-                for i in range(len(file)):
-                    if start <= i < stop:
-                        product_list.append(file[i])
-                    elif i == stop:
-                        break
+                UserOperation.traverse_pages(product_list, page_number, file)
 
         except FileNotFoundError or OSError:
             return None
@@ -73,7 +87,7 @@ class ProductOperation:
         :return: returns bool based on success
         """
         ProductOperation.len_products_txt -= 1
-        ProductOperation.pages_amount = ProductOperation.len_products_txt // 10 + 1
+        ProductOperation.set_pages_amount()
 
     @staticmethod
     def get_product_list_by_keyword(keyword):
@@ -83,7 +97,42 @@ class ProductOperation:
         :param keyword: accepts keyword as str
         :return: returns list of products
         """
-        pass
+        try:
+            with open("data/products.txt", "r", encoding="utf-8") as file:
+                keyword_references = []
+                file_list = list(file)
+                count = 0
+                word_dict = {}
+                for i, line in enumerate(file_list):
+                    left_comma_count = right_comma_count = 0
+                    left, right = 0, len(line)-1
+                    while left_comma_count < 3:
+                        if line[left] == ",":
+                            left_comma_count += 1
+                        left += 1
+                    while right_comma_count < 4:
+                        if line[right] == ",":
+                            right_comma_count += 1
+                        right -= 1
+                    count += 1
+
+                    word_list = line[left+11:right].split()
+                    for word in word_list:
+                        if word in word_dict:
+                            word_dict[word].append(i)
+                        else:
+                            word_dict[word] = [i]
+
+                if keyword in word_dict:
+                    for i, num in enumerate(word_dict[keyword]):
+                        if i > 0 and word_dict[keyword][i] == word_dict[keyword][i-1]:
+                            continue
+                        keyword_references.append(file_list[num])
+
+        except FileNotFoundError or OSError:
+            return None
+        return keyword_references
+
 
     @staticmethod
     def get_product_by_id(product_id):
@@ -142,8 +191,9 @@ class ProductOperation:
         try:
             with open("data/products.txt", "w", encoding="utf-8") as file:
                 file.truncate(0)
-                ProductOperation.len_products_txt = 1
+                ProductOperation.len_products_txt = 0
                 ProductOperation.pages_amount = 1
         except FileNotFoundError or OSError:
             return False
         return True
+

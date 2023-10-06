@@ -4,6 +4,7 @@ import random as r
 from model_customer import Customer
 from model_admin import Admin
 
+
 class UserOperation:
 
     @staticmethod
@@ -156,6 +157,28 @@ class UserOperation:
 
         except FileNotFoundError or OSError or IndexError:
             return 1
-
         return None
+
+    @staticmethod
+    def traverse_pages(universal_list, page_number, file):
+        """
+        Method to traverse file and append to list data within page range
+        :param universal_list: accepts list to append & return
+        :param page_number: accepts the int page number
+        :param file: accepts the file to traverse
+        :return: returns the appended list of page data
+        """
+        try:
+            if page_number < 1:
+                return None
+            file = list(file)
+            start, stop = (page_number * 10) - 10, page_number * 10
+            for i in range(len(file)):
+                if start <= i < stop:
+                    universal_list.append(file[i])
+                elif i == stop:
+                    break
+        except FileNotFoundError or OSError or IndexError:
+            return None
+        return universal_list
 

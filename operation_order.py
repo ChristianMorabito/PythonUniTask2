@@ -87,17 +87,8 @@ class OrderOperation:
         """
         try:
             with open("data/orders.txt", "r", encoding="utf-8") as file:
-
-                if page_number < 1:
-                    return None
-                file = list(file)
-                start, stop = (page_number * 10) - 10, page_number * 10
                 order_list = []
-                for i in range(len(file)):
-                    if start <= i < stop:
-                        order_list.append(file[i])
-                    elif i == stop:
-                        break
+                UserOperation.traverse_pages(order_list, page_number, file)
 
         except FileNotFoundError or OSError:
             return None
@@ -110,11 +101,11 @@ class OrderOperation:
         method to automatically generate test data
         :return: returns bool based on success
         """
-        if ProductOperation.len_products_txt < 2:  # TODO: LOOK AT THIS. WHY 2?
+        if ProductOperation.len_products_txt == 0:
             ProductOperation.extract_products_from_files()
         name = ["chris_m", "jack_p", "bob_l", "jazz_f", "andrea_v", "hans_j", "sam_j", "mike_l", "luke_s", "patches_a"]
         if UserOperation.check_username_exist(name[0]):
-            return 0
+            return 0  # return if test data already generated
         pw = ["Apple1", "Badger5", "toiLet2", "Bucky8", "Cherry6", "Elf45", "Meat6", "Badger1", "Yucky1", "Glue9"]
         email = ["chris_m@gmail.com", "jack_p@gmail.com", "bob_l@gmail.com", "jazz_f@gmail.com", "andrea_v@gmail.com",
                  "hans_j@gmail.com", "sam_j@gmail.com", "mike_l@gmail.com", "luke_s@gmail.com", "patches_a@gmail.com"]
@@ -156,7 +147,7 @@ class OrderOperation:
         to_delete = set()
         for i in range(total_order_amount):
             if len(to_delete) > 0:
-                user_order_dict = {name_list[j]: r_order_amount[j]
+                user_order_dict = {name_list[j]: user_order_dict[name_list[j]]
                                    for j in range(len(name_list)) if name_list[j] not in to_delete}
                 to_delete.clear()
             if not OrderOperation.create_an_order(name_list[i % len(name_list)], product_indexes[i], timestamps[i]):
@@ -165,8 +156,8 @@ class OrderOperation:
             if user_order_dict[name_list[i % len(name_list)]] == 0:
                 to_delete.add(name_list[i % len(name_list)])
                 del name_list[i % len(name_list)]
+            r.shuffle(name_list)  # shuffle names in list, so there isn't a pattern of names in orders.txt
         return True
-
 
     @staticmethod
     def generate_random_product_list(amount, product_index_list):
@@ -181,6 +172,7 @@ class OrderOperation:
             return None
 
         return product_index_list
+
     @staticmethod
     def generate_random_time(time_array, max_advance, start_time, amount, random_increment=None):
         """
@@ -201,6 +193,22 @@ class OrderOperation:
             time_array.append(time.strftime("%d-%m-%Y_%H:%M:%S", timestamp))
             # reference: https://docs.python.org/3/library/time.html
         return time_array
+
+    @staticmethod
+    def set_len_and_pages():
+        """ method to set the len_orders_txt & pages_amount without writing to the orders.txt file """
+        try:
+            with open("data/orders.txt", "r", encoding='utf-8') as file:
+                OrderOperation.len_order_txt = len(list(file))
+                OrderOperation.set_pages_amount()
+        except FileNotFoundError or OSError or IndexError:
+            return False
+        return True
+
+    @staticmethod
+    def set_pages_amount():
+        """ Method to establish the amount of pages in a file, i.e. 1 page = 10 lines of txt """
+        OrderOperation.pages_amount = OrderOperation.len_order_txt // 10 + 1
 
     @staticmethod
     def generate_single_customer_consumption_figure(customer_id):

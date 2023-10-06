@@ -94,7 +94,7 @@ def customer_control(user):
 
         try:
             raw_choice, keyword = IOInterface.get_user_input("Enter: ", num_of_args=2)
-            choice = int(raw_choice[0])
+            choice = int(raw_choice)
             if 0 < int(raw_choice) < 7:
                 IOInterface.print_message("\n" + input_msg[choice] + "\n")
                 if choice == 1:  # show profile
@@ -103,7 +103,8 @@ def customer_control(user):
                     user_update = customer_update(user)
                     user = user if not user_update else user_update
                 elif choice == 3:  # show products (input could have keyword)
-                    pass
+                    show("data/products.txt", ProductOperation.pages_amount,
+                         ProductOperation.get_product_list, None if not keyword else keyword)
                 elif choice == 4:  # show history orders
                     pass
                 elif choice == 5:  # generate all consumption figures
@@ -146,10 +147,15 @@ def login_control():
                 return
 
             IOInterface.print_message("\nLoading store data...\n")
+            # 1) download data to products.txt if the file is empty
             if not ProductOperation.extract_products_from_files():
                 IOInterface.print_error_message("operation_product.extract_products_from_files()",
                                                 "Error loading store data. Logging out...")
                 return
+            # 2) establish length of orders+users .txt files & then use that data to establish page number amount
+            # in orders+users .txt files
+            CustomerOperation.set_len_and_pages()
+            OrderOperation.set_len_and_pages()
 
             admin_control(user_obj) if user_obj.__class__.__name__ == "Admin" else customer_control(user_obj)
 
@@ -163,14 +169,27 @@ def login_control():
                                         "Enter only a number! Try again...")
 
 
-def show(path, pages_amount, get_list_function):
-    if os.path.getsize(path) == 0:
+def show(path, pages_amount, get_list_function, keyword=None):
+    """
+    Function is shared between customer & admin. It's the helper function to show either products,
+    orders or users
+    :param path: accepts string for file path
+    :param pages_amount: accepts int which is the amount of pages in a file (10 items = 1 page)
+    :param get_list_function: accepts function to call specific list
+    :param keyword: if customer wants to search a keyword instead of product pages, then they have that option
+    :return: None
+    """
+    if os.path.getsize(path) == 0:  # admin pathway
         IOInterface.print_message("Unable to show contents since file is empty!")
         return
-    if path == "data/users.txt" and CustomerOperation.len_users_txt == 1:
+    if path == "data/users.txt" and CustomerOperation.len_users_txt == 1:  # admin pathway
         # admin is not a customer, so if only admin in the customer list, then the list is considered empty
         IOInterface.print_message("Unable to show contents since file is empty!")
         return
+    if keyword:  # customer pathway
+        IOInterface.show_list(list_type=ProductOperation.get_product_list_by_keyword(keyword))
+        return
+
     while True:
         try:
             page_no = IOInterface.get_user_input(f"Enter a page no. between 1 & "
@@ -179,8 +198,8 @@ def show(path, pages_amount, get_list_function):
             if page_no == "menu":
                 return
             if 0 < int(page_no) <= pages_amount:
-                product_list = get_list_function(int(page_no))[0]
-                IOInterface.show_list(list_type=product_list)
+                universal_list = get_list_function(int(page_no))[0]
+                IOInterface.show_list(list_type=(universal_list, int(page_no), pages_amount))
             else:
                 IOInterface.print_error_message("main.admin_show()",
                                                 "Input out of range! Try again...")
@@ -197,7 +216,7 @@ def admin_control(user):  # TODO: does user arg need to be there?
                  4: "__SHOW ORDERS__", 5: "Generating test data...", 6: "__ALL STATISTICS__",
                  7: "__DELETE ALL DATA__", 8: "\nLogging out..."}
 
-    IOInterface.print_message("SUCCESS!! You are now logged in as ADMIN.\n")
+    IOInterface.print_message("SUCCESS!! You are now logged in as ADMIN.")
 
     while logged_in:
         IOInterface.admin_menu()
@@ -217,21 +236,21 @@ def admin_control(user):  # TODO: does user arg need to be there?
                     show("data/orders.txt", OrderOperation.pages_amount, OrderOperation.get_order_list)
                 elif choice == 5:  # generate test data
                     if ProductOperation.len_products_txt == 0:
-                        IOInterface.print_message("\nLoading store data...\n")
+                        IOInterface.print_message("Loading store data...")
                     test_data = OrderOperation.generate_test_order_data()
                     if not test_data:
                         IOInterface.print_error_message("operation_order.generation_test_order_data()",
                                                         "Unable to generate test data!" if type(test_data) == bool
                                                         else "Test data already generated!")
                     else:
-                        IOInterface.print_message("Test data has been generated.\n")
+                        IOInterface.print_message("Test data has been generated.")
                 elif choice == 6:  # generate all statistical figures
                     pass
                 elif choice == 7:  # delete all data
                     if (CustomerOperation.delete_all_customers() and
                             OrderOperation.delete_all_orders() and
                             ProductOperation.delete_all_products()):
-                        IOInterface.print_message("All data has been deleted.\n")
+                        IOInterface.print_message("All data has been deleted.")
                     else:
                         IOInterface.print_error_message("operation_{product, order & customer}.delete_all...()",
                                                         "Unable to delete all data!")

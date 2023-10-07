@@ -1,6 +1,10 @@
 import time
 import random as r
 import os
+
+import pandas as pd
+from matplotlib import pyplot as plt
+
 from model_order import Order
 from operation_customer import CustomerOperation
 from operation_product import ProductOperation
@@ -220,30 +224,123 @@ class OrderOperation:
     @staticmethod
     def generate_single_customer_consumption_figure(customer_id):
         """
-        method to generate a chart to show sum of order price & 12 diff. months
-        for given customer
+        method to generate a chart to show sum of order price of 12 diff. months for given customer
         :param customer_id: accepts customer_id str
-        :return: None
         """
-        pass
+        try:
+            with open("data/orders.txt", "r", encoding="utf-8") as orders_file:
+                id_and_date = {}
+                for line in orders_file:
+                    line_split = line.split(", ")
+                    if line_split[1][9:] == customer_id:
+                        id_and_date[line_split[2][9:]] = [line_split[3][12:-1]]
+            if len(id_and_date) == 0:
+                return False
+
+            with open("data/products.txt", "r", encoding="utf-8") as products_file:
+                for line in products_file:
+                    line_split = line.split(", ")
+                    prod_id = line_split[0][8:]
+                    if prod_id in id_and_date:
+                        price = line_split[-4][19:]
+                        id_and_date[prod_id].append(float(price))
+
+            # this section with the 2 for-loops below is just to ensure that if there is a month without shopping,
+            # that it has at least $0 in the chart
+            date_price = {date: cost for date, cost in id_and_date.values()}
+            month_check = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"}
+            year = ""
+            for key in date_price.keys():
+                if not year:
+                    year = key[6:10]
+                if key[3:5] in month_check:
+                    month_check.remove(key[3:5])
+            for month in month_check:
+                date_price[f"01-{month}-{year}_00:00:00"] = 0
+
+            df = pd.DataFrame(list(date_price.items()), columns=['Date', 'Price'])
+            df['Date'] = pd.to_datetime(df['Date'], format='%d-%m-%Y_%H:%M:%S')
+            df['MonthYear'] = df['Date'].dt.to_period('M')
+            monthly_consumption = df.groupby('MonthYear')['Price'].sum()
+            plt.figure(figsize=(10, 6))
+            monthly_consumption.plot(kind='bar')
+            plt.xlabel('Month and Year')
+            plt.ylabel('Total Consumption (Price Sum)')
+            plt.title('Consumption by Month and Year')
+            plt.xticks(rotation=45)
+            figure_path = os.path.join("data/figure", 'customer_consumption_figure.png')
+            plt.savefig(figure_path)
+
+
+
+        except IndexError or FileNotFoundError or OSError:
+            return False
+        return True
 
     @staticmethod
     def generate_all_customers_consumption_figure():
-        """
-        method to generate a chart to show sum of order price & 12 diff. months
-        for all customers
-        :return: None
-        """
-        pass
+        """ method to gen. a chart showing sum of order price & 12 diff. months for all customers """
+        try:
+            with open("data/orders.txt", "r", encoding="utf-8") as orders_file:
+                id_and_date = {}
+                for line in orders_file:
+                    line_split = line.split(", ")
+                    id_and_date[line_split[2][9:]] = [line_split[3][12:-1]]
+            if len(id_and_date) == 0:
+                return False
+
+            with open("data/products.txt", "r", encoding="utf-8") as products_file:
+                for line in products_file:
+                    line_split = line.split(", ")
+                    prod_id = line_split[0][8:]
+                    if prod_id in id_and_date:
+                        price = line_split[-4][19:]
+                        id_and_date[prod_id].append(float(price))
+
+            date_price = {date: cost for date, cost in id_and_date.values()}
+            df = pd.DataFrame(list(date_price.items()), columns=['Date', 'Price'])
+            df['Date'] = pd.to_datetime(df['Date'], format='%d-%m-%Y_%H:%M:%S')
+            df['MonthYear'] = df['Date'].dt.to_period('M')
+            monthly_consumption = df.groupby('MonthYear')['Price'].sum()
+            plt.figure(figsize=(10, 6))
+            monthly_consumption.plot(kind='bar')
+            plt.xlabel('Month and Year')
+            plt.ylabel('Total Consumption (Price Sum)')
+            plt.title('Consumption by Month and Year')
+            plt.xticks(rotation=45)
+            figure_path = os.path.join("data/figure", 'all_customers_consumption_figure.png')
+            plt.savefig(figure_path)
+
+        except IndexError or FileNotFoundError or OSError:
+            return False
+        return True
 
     @staticmethod
     def generate_all_top_10_best_sellers_figure():
-        """
-        method to generate a graph to show the top 10 best-selling products
-        and sort the result in descending order.
-        :return: None
-        """
-        pass
+        """ method to gen. a graph of top 10 best-selling products (descending). """
+        try:
+            with open("data/orders.txt", "r", encoding="utf-8") as file:
+                id_list = []
+                for line in file:
+                    id_list.append(line.split(", ")[2][9:])
+
+            series = pd.Series(id_list)
+            id_counts = series.value_counts()
+            top_10_products = id_counts.head(10)
+            top_10_products = top_10_products.sort_values(ascending=False)
+            plt.figure(figsize=(10, 6))
+            top_10_products.plot(kind='bar')
+            plt.xlabel('Products')
+            plt.xticks(fontsize=6)
+            plt.ylabel('Count')
+            plt.title('Top 10 Best Sellers')
+            figure_path = os.path.join("data/figure", 'top_10_best_sellers.png')
+            plt.savefig(figure_path)
+            plt.close()
+
+        except FileNotFoundError or OSError or IndexError:
+            return False
+        return True
 
     @staticmethod
     def delete_all_orders():

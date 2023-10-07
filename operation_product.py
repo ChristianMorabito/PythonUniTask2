@@ -1,6 +1,7 @@
 import os
 from model_product import Product
 import pandas as pd
+import matplotlib.pyplot as plt
 
 from operation_user import UserOperation
 
@@ -175,9 +176,32 @@ class ProductOperation:
         method generates a bar chart that shows the total no.
         of products for each category in descending order.
         The figure is saved into the data/figure folder
-        :return: None
         """
-        pass
+
+        try:
+            with open("data/products.txt", "r", encoding="utf-8") as file:
+                categories = []
+                for line in file:
+                    categories.append(line.split(", ")[2][14:])
+
+            series = pd.Series(categories)
+            count = series.value_counts()
+            count = count.sort_values(ascending=False)
+
+            plt.figure(figsize=(10, 6))
+            count.plot(kind='bar')
+
+            plt.ylabel('Count')
+            plt.title('Category Figure')
+            plt.xticks(fontsize=8, rotation=45)
+
+            figure_path = os.path.join("data/figure", 'category_figure.png')
+            plt.savefig(figure_path)
+            plt.close()
+        except FileNotFoundError or OSError or Exception:
+            return False
+        return True
+
 
     @staticmethod
     def generate_discount_figure():
@@ -222,3 +246,5 @@ class ProductOperation:
         except FileNotFoundError or OSError:
             return False
         return True
+
+ProductOperation.generate_category_figure()

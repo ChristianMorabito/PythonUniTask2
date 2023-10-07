@@ -1,3 +1,19 @@
+"""
+Name:          Christian Morabito
+Student ID:    22298827
+Creation Date: 29/08/23
+Last modified: 8/10/23
+
+This program is a simple e-commerce system which allows customers to
+log in & perform shopping operations like purchasing products, viewing
+order history & showing consumption reports. This program is for an
+assessment at Monash University, ITO4133: Intro. to Python
+"""
+
+# TODO: generate_discount_likes_count_figure()
+# TODO: generate_likes_count_figure()
+# TODO: generate_discount_figure()
+
 import os
 from io_interface import IOInterface
 from operation_customer import CustomerOperation

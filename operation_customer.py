@@ -144,7 +144,7 @@ class CustomerOperation:
                 found_customer = False
 
             for i, line in enumerate(file_list):
-                if line and line[9:21] == customer_id:
+                if line[9:21] == customer_id:
                     found_customer = True
                     del file_list[i]
                     break
@@ -171,7 +171,18 @@ class CustomerOperation:
         try:
             with open("data/users.txt", "r", encoding="utf-8") as file:
                 customer_list = []
-                UserOperation.traverse_pages(customer_list, page_number, file)
+
+                start, stop = (page_number * 10) - 10, page_number * 10
+                for i, line in enumerate(file):
+                    if start <= i < stop:
+                        line_split = line.split(", ")
+                        encrypted_pw = line_split[2][15:]
+                        decrypted_pw = UserOperation.decrypt_password(encrypted_pw)
+                        replace_string = "user_password: " + decrypted_pw
+                        line_split[2] = replace_string
+                        customer_list.append(", ".join(line_split))
+                    elif i == stop:
+                        break
 
         except FileNotFoundError or OSError:
             return None
@@ -210,5 +221,4 @@ class CustomerOperation:
         except FileNotFoundError or OSError:
             return False
         return True
-
 

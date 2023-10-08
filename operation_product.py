@@ -19,10 +19,10 @@ class ProductOperation:
             if os.path.getsize("data/products.txt") > 0:
                 return ProductOperation.set_len_and_pages()
             data_set = set()
-            files = os.listdir("product")
+            files = os.listdir("data/product")
             with open("data/products.txt", "w", encoding='utf-8') as w_file:
                 for file_name in files:
-                    df = pd.read_csv("product/" + file_name)
+                    df = pd.read_csv("data/product/" + file_name)
                     for i, row in df.iterrows():
                         pro_id = row["id"]
                         if pro_id in data_set:  # add product ids into set to skip over duplicates
@@ -87,8 +87,31 @@ class ProductOperation:
         :param product_id: accepts product_id str
         :return: returns bool based on success
         """
-        ProductOperation.len_products_txt -= 1
-        ProductOperation.set_pages_amount()
+        try:
+            if os.path.getsize("data/products.txt") == 0:
+                return False
+            with open("data/products.txt", "r", encoding='utf-8') as file:
+                file_list = list(file)
+                found_product = False
+
+            for i, line in enumerate(file_list):
+                file_line_product = line.split(", ")[0][8:]
+                if file_line_product == product_id:
+                    found_product = True
+                    del file_list[i]
+                    break
+
+            write_string = "".join(file_list)
+
+            if found_product:
+                with open("data/products.txt", "w", encoding='utf-8') as file:  # Open file to write
+                    file.write(write_string)
+                ProductOperation.len_products_txt -= 1
+                ProductOperation.set_pages_amount()
+
+        except FileNotFoundError or OSError:
+            return False
+        return found_product
 
     @staticmethod
     def get_product_list_by_keyword(keyword):
@@ -129,18 +152,19 @@ class ProductOperation:
                         if i > 0 and word_dict[keyword][i] == word_dict[keyword][i-1]:
                             continue
                         keyword_references.append(file_list[num])
+                        if len(keyword_references) == 100:
+                            break
 
         except FileNotFoundError or OSError:
             return None
         return keyword_references
-
 
     @staticmethod
     def get_product_by_id(product_id):
         """
         method returns 1 product object based on the given ID
         :param product_id: accepts product_id as str
-        :return: returns product object or None if cannot be found
+        :return: returns product object or None if product cannot be found
         """
         try:
             with open("data/products.txt", "r", encoding="utf-8") as file:
@@ -163,7 +187,7 @@ class ProductOperation:
                 if int(product_id) in id_dict:
                     for num in id_dict[int(product_id)]:
                         result_list.append(file_list[num])
-                        if len(result_list) == 50:
+                        if len(result_list) == 100:
                             break
 
         except FileNotFoundError or OSError:
@@ -176,6 +200,7 @@ class ProductOperation:
         method generates a bar chart that shows the total no.
         of products for each category in descending order.
         The figure is saved into the data/figure folder
+        :return: returns bool based on success
         """
 
         try:
@@ -195,42 +220,117 @@ class ProductOperation:
             plt.title('Category Figure')
             plt.xticks(fontsize=8, rotation=45)
 
-            figure_path = os.path.join("data/figure", 'category_figure.png')
+            figure_path = os.path.join("data/figure", "category_figure.png")
             plt.savefig(figure_path)
             plt.close()
         except FileNotFoundError or OSError or Exception:
             return False
         return True
 
-
     @staticmethod
     def generate_discount_figure():
         """
-         method generates pie chart that shows the proportion of
-         products that have a discount value < 30, 30 >= 60, & > 60.
-         Chart is saved into the data/figure folder.
-        :return: None
+        method generates pie chart of products with discount 0 < 30, 30 >= 60, & > 60.
+        saved into the data/figure folder.
+        :return: returns bool based on success
         """
-        pass
+        less_than = in_range = greater_than = 0
+        try:
+            with open("data/products.txt", "r", encoding="utf-8") as file:
+                for line in file:
+                    if line:
+                        curr_discount = int(line.split(", ")[-2][14:])
+                        if curr_discount < 30:
+                            less_than += 1
+                        elif 30 <= curr_discount <= 60:
+                            in_range += 1
+                        else:
+                            greater_than += 1
+
+            data = {'Variable': ['Less than 30', 'Between 30 & 60 (inc.)', 'Greater than 60'],
+                    'Value': [less_than, in_range, greater_than]}
+
+            df = pd.DataFrame(data)
+            plt.figure(figsize=(9.5, 5))
+            plt.pie(df['Value'], autopct='%1.1f%%', startangle=140, textprops={"fontsize": 14})
+            plt.title('Product Discount Ranges')
+            plt.axis('equal')
+            plt.legend(df['Variable'], title="Legend", loc="lower right")
+            figure_path = os.path.join("data/figure", "discount_figure.png")
+            plt.savefig(figure_path)
+            plt.close()
+
+        except FileNotFoundError or OSError:
+            return False
+        return True
 
     @staticmethod
     def generate_likes_count_figure():
         """
         method generates chart displaying the sum of products’ likes_count
         for each category (ascending). Chart is saved into the data/figure folder
-        :return: None
+        :return: returns bool based on success
         """
-        pass
+        try:
+            category_like = {file_name[:-4]: 0 for file_name in os.listdir("data/product")}
+            with open("data/products.txt", "r", encoding="utf-8") as file:
+                for line in file:
+                    if line:
+                        curr_like = int(line.split(", ")[-1][17:])
+                        curr_category = line.split(", ")[2][14:]
+                        if curr_category in category_like:
+                            category_like[curr_category] += curr_like
+
+            series = pd.Series(category_like)
+
+            plt.figure(figsize=(13, 6))  # bar chart
+            series.plot(kind='bar')
+
+            plt.xlabel('Category')
+            plt.ylabel('Total Likes Amount')
+            plt.title('Total Likes Amount by Category')
+            plt.xticks(rotation=45)
+            plt.tight_layout()  # stops text from being cut-off
+            figure_path = os.path.join("data/figure", "category_like_count.png")
+            plt.savefig(figure_path)
+            plt.close()
+
+        except FileNotFoundError or OSError:
+            return False
+        return True
 
     @staticmethod
-    def generate_dislikes_count_figure():
+    def generate_discount_likes_count_figure():
         """
-        method generates scatter chart showing relationship
-        between likes_count/discount for all products.
-        Chart is saved into the data/figure folder
-        :return: None
+        Method generates a scatter chart showing relationship
+        of likes_count & discount. The figure is saved
+        into the data/figure folder.
+        :return: returns bool based on success
         """
-        pass
+        try:
+            likes_discount = {"likes": [], "discount": []}
+
+            with open("data/products.txt", "r", encoding="utf-8") as file:
+                for line in file:
+                    if line:
+                        curr_like = int(line.split(", ")[-1][17:])
+                        curr_discount = int(line.split(", ")[-2][14:])
+                        likes_discount["likes"].append(curr_like)
+                        likes_discount["discount"].append(curr_discount)
+
+                df = pd.DataFrame(likes_discount)
+                plt.scatter(df['discount'], df['likes'], alpha=0.4)
+                plt.xlabel('Discount')
+                plt.ylabel('Likes')
+                plt.title('Likes vs. Discount')
+                plt.grid(True)  # add grid for better readability
+                figure_path = os.path.join("data/figure", "likes_vs_discount.png")
+                plt.savefig(figure_path)
+                plt.close()
+
+        except FileNotFoundError or OSError:
+            return False
+        return True
 
     @staticmethod
     def delete_all_products():
@@ -247,4 +347,3 @@ class ProductOperation:
             return False
         return True
 
-ProductOperation.generate_category_figure()

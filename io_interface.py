@@ -73,63 +73,37 @@ class IOInterface:
               "\t\t• username\n"
               "\t\t• password\n"
               "\t\t• email address\n"
-              "\t\t• mobile number\n")
+              "\t\t• mobile number")
 
     @staticmethod
     def register_username():
         """ method displays requirement to pass username validation """
-        print("USERNAME: should only contain letters or underscores. Length should be at least 5 characters.")
+        print("\nUSERNAME: should only contain letters or underscores. Length should be at least 5 characters.")
 
     @staticmethod
     def register_password():
         """ method displays requirement to pass password validation """
-        print("PASSWORD: should contain at least 1 letter & 1 number. Length should be at least 5 characters.")
+        print("\nPASSWORD: should contain at least 1 letter & 1 number. Length should be at least 5 characters.")
 
     @staticmethod
     def register_email():
         """ method displays requirement to pass email address validation """
-        print("EMAIL: must contain username, @ symbol, domain name, & dot.")
+        print("\nEMAIL: must contain username, @ symbol, domain name, & dot.")
 
     @staticmethod
     def register_mobile():
         """ method displays requirement to pass email mobile validation """
-        print("MOBILE: must be exactly 10 digits, only numbers & starting with either 04 or 03.")
+        print("\nMOBILE: must be exactly 10 digits, only numbers & starting with either 04 or 03.")
 
     @staticmethod
     def go_to_menu():
         """ method that displays command option for user to go back"""
-        print("__type 'menu' to quit & return to previous menu. NOTE: changes won't be saved__\n")
+        print("__type 'menu' to quit & return to previous menu. NOTE: current registration won't be saved__\n")
 
     @staticmethod
     def print_going_back():
         """ method that displays msg that user is going back to main menu"""
         print("\nGoing back...")
-
-    @staticmethod
-    def text_box(string):
-        string_to_list = string.split(", ")
-        string = "".join(
-            [line + "\n" if i < len(string_to_list) - 1 else line for i, line in enumerate(string_to_list)])
-        vertical, horizontal = "|", "-"
-        max_len = local_len = 0
-        temp_string = ""
-        lines_list = []
-        for i in range(len(string)):
-            temp_string += string[i]
-            if string[i] != "\n":
-                local_len += 1
-            else:
-                lines_list.append(vertical + " " + temp_string)
-                temp_string = ""
-                max_len = max(max_len, local_len)
-                local_len = 0
-
-        for i in range(len(lines_list)):
-            lines_list[i] = lines_list[i][:-1] + (" " * (max_len - len(lines_list[i]) + 4)) + "|" + "\n"
-
-        top = "+" + ("-" * (max_len + 2)) + "+\n"
-        base = "+" + ("-" * (max_len + 2)) + "+"
-        print(top + "".join(lines_list) + base + "\n")
 
     @staticmethod
     def show_list(user_role=None, list_type=None, object_list=None):
@@ -139,24 +113,45 @@ class IOInterface:
         :param list_type: accepts list_type str
         :param object_list: accepts list of objects
         """
-        def string_to_list(string):
-            result = []
-            current = ""
-            flag = False
-
-            for char in string:
-                if char == '"':
-                    flag = not flag
-                elif char == "," and not flag:
-                    result.append(current.strip())
-                    current = ""
+        def text_box(string):
+            string_list = string.split(", ")
+            string = "".join([str_line + "\n" if i < len(string_list) - 1
+                              else str_line for i, str_line in enumerate(string_list)])
+            vertical, horizontal = "|", "-"
+            max_len = local_len = 0
+            temp_string = ""
+            lines_list = []
+            for i in range(len(string)):
+                temp_string += string[i]
+                if string[i] != "\n":
+                    local_len += 1
                 else:
-                    current += char
+                    lines_list.append(vertical + " " + temp_string)
+                    temp_string = ""
+                    max_len = max(max_len, local_len)
+                    local_len = 0
 
-            result.append(current.strip())
+            for i in range(len(lines_list)):
+                lines_list[i] = lines_list[i][:-1] + (" " * (max_len - len(lines_list[i]) + 4)) + "|" + "\n"
 
-            string = "\n" + "\n".join(result) + "\n"
-            print(string)
+            top = "+" + ("-" * (max_len + 2)) + "+\n"
+            base = "+" + ("-" * (max_len + 2)) + "+"
+            print(top + "".join(lines_list) + base + "\n")
+
+        def string_to_list(string):
+            split = string.split(", ")
+            pro_id, model, category, price, raw_price, discount, likes = (split[0], split[1], split[2],
+                                                                          split[-4], split[-3], split[-2], split[-1])
+            pro_name = split[3] if len(split) == 8 else "".join(split[3:-4])
+            print(f"{pro_id}\n"
+                  f"{model}\n"
+                  f"{category}\n"
+                  f"{pro_name}\n"
+                  f"{price}\n"
+                  f"{raw_price}\n"
+                  f"{discount}\n"
+                  f"{likes}")
+        print()  # new line
 
         if list_type:
             if type(list_type) == list:
@@ -170,6 +165,13 @@ class IOInterface:
             if len(universal_list) == 0:
                 print()  # add new line
             print(("____END OF FILE____" if pages_amount == page_no else f"____END OF PAGE {page_no}____") + "\n")
+
+        elif object_list:
+            text_box(object_list)
+
+        elif user_role:
+            print(user_role.user_role)
+
 
 
 

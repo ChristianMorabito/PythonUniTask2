@@ -76,8 +76,32 @@ class OrderOperation:
         :param order_id: accepts order_id str
         :return: returns bool based on success
         """
-        OrderOperation.len_order_txt -= 1
-        OrderOperation.pages_amount = OrderOperation.len_order_txt // 10 + 1
+
+        try:
+            if os.path.getsize("data/orders.txt") == 0:
+                return False
+            with open("data/orders.txt", "r", encoding='utf-8') as file:
+                file_list = list(file)
+                found_order = False
+
+            for i, line in enumerate(file_list):
+                if line[10:17] == order_id:
+                    found_order = True
+                    del file_list[i]
+                    break
+
+            write_string = "".join(file_list)
+
+            if found_order:
+                with open("data/orders.txt", "w", encoding='utf-8') as file:  # Open file to write
+                    file.write(write_string)
+                OrderOperation.len_order_txt -= 1
+                OrderOperation.pages_amount = OrderOperation.len_order_txt // 10 + 1
+
+        except FileNotFoundError or OSError:
+            return False
+        return found_order
+
 
     @staticmethod
     def get_order_list(page_number=None, customer_id=None):
@@ -122,7 +146,7 @@ class OrderOperation:
                  "hans_j@gmail.com", "sam_j@gmail.com", "mike_l@gmail.com", "luke_s@gmail.com", "patches_a@gmail.com"]
         mobile = ["0412341234", "0423452345", "0434563456", "0445674567", "0456785678",
                   "0467896789", "0478907890", "0312341234", "0323452345", "0334563456"]
-        r_time_array, advance_seconds = [], 10000000
+        r_time_array, advance_seconds = [], 10000000  # int represents the max advance amount.
         OrderOperation.generate_random_time(r_time_array, advance_seconds,
                                             "01-01-2020_00:00:00", 10, True)
         users = {"name": name, "pw": pw, "email": email, "mobile": mobile, "r_time": r_time_array}
@@ -172,12 +196,18 @@ class OrderOperation:
 
     @staticmethod
     def generate_random_product_list(amount, product_index_list):
+        """
+        Method used to generate a list at random length consisting of random products from products.txt file
+        :param amount: accepts int which is to be a random number
+        :param product_index_list: accepts a list of random ints which represents the index
+        :return: returns list of random product IDs.
+        """
         try:
             with open("data/products.txt", "r", encoding="utf-8") as file:
                 random_indexes = [r.randint(0, ProductOperation.len_products_txt-2) for _ in range(amount)]
                 file_list = list(file)
                 for index in random_indexes:
-                    product_index_list.append(file_list[index].split(", ")[0][8:])
+                    product_index_list.append(file_list[index].split(", ")[0][8:])  # product id
 
         except FileNotFoundError or IndexError or OSError:
             return None
@@ -226,6 +256,7 @@ class OrderOperation:
         """
         method to generate a chart to show sum of order price of 12 diff. months for given customer
         :param customer_id: accepts customer_id str
+        :return: returns bool based on success
         """
         try:
             with open("data/orders.txt", "r", encoding="utf-8") as orders_file:
@@ -250,8 +281,8 @@ class OrderOperation:
             date_price = {date: cost for date, cost in id_and_date.values()}
             month_check = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"}
             year = ""
-            for key in date_price.keys():
-                if not year:
+            for i, key in enumerate(date_price.keys()):
+                if i == 0:  # establish the year string in the first iteration
                     year = key[6:10]
                 if key[3:5] in month_check:
                     month_check.remove(key[3:5])

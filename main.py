@@ -3,6 +3,7 @@ Name:          Christian Morabito
 Student ID:    22298827
 Creation Date: 29/08/23
 Last modified: 8/10/23
+GitHub Link:   https://github.com/ChristianMorabito/PythonUniTask2
 
 This program is a simple e-commerce system which allows customers to log in & perform shopping
 operations like purchasing products, viewing order history & showing consumption reports.

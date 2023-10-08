@@ -355,6 +355,7 @@ def main():
             IOInterface.print_error_message("operation_admin.register_admin()",
                                             "Error registering admin. Unable to login as admin")
         while main_loop:
+            IOInterface.print_title()
             login_control()
     except OSError or ImportError or Exception:
         IOInterface.print_error_message("main.main()", "Unexpected error. Program exiting...")

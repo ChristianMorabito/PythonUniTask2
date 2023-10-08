@@ -106,9 +106,10 @@ class IOInterface:
         print("\nGoing back...")
 
     @staticmethod
-    def show_list(user_role=None, list_type=None, object_list=None):
+    def show_list(user_role=None, list_type=None, object_list=None, product_list_select=None):
         """
         method prints diff. types of list, i.e. customer, product, or order.
+        :param product_list_select: accepts a list of products. This is required to customise the product print
         :param user_role: accepts user_role str
         :param list_type: accepts list_type str
         :param object_list: accepts list of objects
@@ -138,7 +139,7 @@ class IOInterface:
             base = "+" + ("-" * (max_len + 2)) + "+"
             print(top + "".join(lines_list) + base + "\n")
 
-        def string_to_list(string):
+        def product_list(string):
             split = string.split(", ")
             pro_id, model, category, price, raw_price, discount, likes = (split[0], split[1], split[2],
                                                                           split[-4], split[-3], split[-2], split[-1])
@@ -151,8 +152,13 @@ class IOInterface:
                   f"{raw_price}\n"
                   f"{discount}\n"
                   f"{likes}")
-        print()  # new line
 
+        def string_to_list(string):
+            result = string.split(", ")
+            string = "\n".join(result)
+            print(string)
+
+        print()  # new line
         if list_type:
             if type(list_type) == list:
                 for line in list_type:
@@ -161,7 +167,11 @@ class IOInterface:
 
             universal_list, page_no, pages_amount = list_type
             for line in universal_list:
-                string_to_list(line)
+                if product_list_select:
+                    product_list(line)
+                else:
+                    string_to_list(line)
+
             if len(universal_list) == 0:
                 print()  # add new line
             print(("____END OF FILE____" if pages_amount == page_no else f"____END OF PAGE {page_no}____") + "\n")

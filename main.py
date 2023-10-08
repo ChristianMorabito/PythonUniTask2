@@ -257,7 +257,8 @@ def show(path, pages_amount, get_list_function, keyword=None):
                 return
             if 0 < int(page_no) <= pages_amount:
                 universal_list = get_list_function(int(page_no))[0]
-                IOInterface.show_list(list_type=(universal_list, int(page_no), pages_amount))
+                IOInterface.show_list(list_type=(universal_list, int(page_no), pages_amount),
+                                      product_list_select=True if path == "data/products.txt" else None)
             else:
                 IOInterface.print_error_message("main.admin_show()",
                                                 "Input out of range! Try again...")
@@ -358,6 +359,7 @@ def main():
         while main_loop:
             IOInterface.print_title()
             login_control()
+
     except OSError or ImportError or Exception:
         IOInterface.print_error_message("main.main()", "Unexpected error. Program exiting...")
 

@@ -138,10 +138,10 @@ class OrderOperation:
         """
         if ProductOperation.len_products_txt == 0:
             ProductOperation.extract_products_from_files()
-        name = ["chris_m", "jack_p", "bob_l", "jazz_f", "andrea_v", "hans_j", "sam_j", "mike_l", "luke_s", "patches_a"]
+        name = ["test", "jack_p", "bob_l", "jazz_f", "andrea_v", "hans_j", "sam_j", "mike_l", "luke_s", "patches_a"]
         if UserOperation.check_username_exist(name[0]):
             return 0  # return if test data already generated
-        pw = ["Apple1", "Badger5", "toiLet2", "Bucky8", "Cherry6", "Elf45", "Meat6", "Badger1", "Yucky1", "Glue9"]
+        pw = ["test1", "Badger5", "toiLet2", "Bucky8", "Cherry6", "Elf45", "Meat6", "Badger1", "Yucky1", "Glue9"]
         email = ["chris_m@gmail.com", "jack_p@gmail.com", "bob_l@gmail.com", "jazz_f@gmail.com", "andrea_v@gmail.com",
                  "hans_j@gmail.com", "sam_j@gmail.com", "mike_l@gmail.com", "luke_s@gmail.com", "patches_a@gmail.com"]
         mobile = ["0412341234", "0423452345", "0434563456", "0445674567", "0456785678",
@@ -302,8 +302,6 @@ class OrderOperation:
             figure_path = os.path.join("data/figure", 'customer_consumption_figure.png')
             plt.savefig(figure_path)
 
-
-
         except IndexError or FileNotFoundError or OSError:
             return False
         return True
@@ -339,7 +337,7 @@ class OrderOperation:
             plt.ylabel('Total Consumption (Price Sum)')
             plt.title('Consumption by Month and Year')
             plt.xticks(rotation=45)
-            figure_path = os.path.join("data/figure", 'all_customers_consumption_figure.png')
+            figure_path = os.path.join("data/figure", 'all_customers_consumption.png')
             plt.savefig(figure_path)
 
         except IndexError or FileNotFoundError or OSError:

@@ -1,11 +1,11 @@
-user_id: u_0000000000, user_name: admin, user_password: ^^uhaANdVMmdEir5nhP1$$, user_register_time: 00-00-0000_00:00:00, user_role: admin
-user_id: u_0000000001, user_name: chris_m, user_password: ^^FHAtppo3povlPzedq1$$, user_register_time: 10-02-2020_19:54:55, user_role: customer, user_email: chris_m@gmail.com, user_mobile: 0412341234
-user_id: u_0000000002, user_name: jack_p, user_password: ^^d2B4uazzdtcge2e4Jryq5$$, user_register_time: 03-05-2020_16:51:58, user_role: customer, user_email: jack_p@gmail.com, user_mobile: 0423452345
-user_id: u_0000000003, user_name: bob_l, user_password: ^^6rtKioteiJYLIleWNtXF2$$, user_register_time: 26-07-2020_00:52:22, user_role: customer, user_email: bob_l@gmail.com, user_mobile: 0434563456
-user_id: u_0000000004, user_name: jazz_f, user_password: ^^prBl4uRbcEekmSy7G8$$, user_register_time: 08-08-2020_14:47:46, user_role: customer, user_email: jazz_f@gmail.com, user_mobile: 0445674567
-user_id: u_0000000005, user_name: andrea_v, user_password: ^^mmC7BhI9eiOr1SruayzB6$$, user_register_time: 09-09-2020_12:49:01, user_role: customer, user_email: andrea_v@gmail.com, user_mobile: 0456785678
-user_id: u_0000000006, user_name: hans_j, user_password: ^^SBENDlmnfmx4Bx5$$, user_register_time: 06-10-2020_14:37:36, user_role: customer, user_email: hans_j@gmail.com, user_mobile: 0467896789
-user_id: u_0000000007, user_name: sam_j, user_password: ^^3SMAJe9ZauStLr6$$, user_register_time: 24-11-2020_21:50:56, user_role: customer, user_email: sam_j@gmail.com, user_mobile: 0478907890
-user_id: u_0000000008, user_name: mike_l, user_password: ^^GwBrFagfdMQggQeF3rDY1$$, user_register_time: 12-01-2021_01:43:59, user_role: customer, user_email: mike_l@gmail.com, user_mobile: 0312341234
-user_id: u_0000000009, user_name: luke_s, user_password: ^^fyY0Wu8dccYk0eyFy1$$, user_register_time: 13-01-2021_19:06:11, user_role: customer, user_email: luke_s@gmail.com, user_mobile: 0323452345
-user_id: u_0000000010, user_name: patches_a, user_password: ^^rTG3QlPvuxOe179$$, user_register_time: 04-02-2021_16:26:11, user_role: customer, user_email: patches_a@gmail.com, user_mobile: 0334563456
+user_id: u_0000000000, user_name: admin, user_password: ^^pDaZHdiumrFifpn2A1$$, user_register_time: 00-00-0000_00:00:00, user_role: admin
+user_id: u_0000000001, user_name: test, user_password: ^^5stobeVnsWHtas1$$, user_register_time: 10-03-2020_16:34:56, user_role: customer, user_email: chris_m@gmail.com, user_mobile: 0412341234
+user_id: u_0000000002, user_name: jack_p, user_password: ^^IZBM2ajZdejg2IeUTrzb5$$, user_register_time: 25-03-2020_19:37:51, user_role: customer, user_email: jack_p@gmail.com, user_mobile: 0423452345
+user_id: u_0000000003, user_name: bob_l, user_password: ^^LptBMotUihkLIBe1MtQk2$$, user_register_time: 11-04-2020_02:45:39, user_role: customer, user_email: bob_l@gmail.com, user_mobile: 0434563456
+user_id: u_0000000004, user_name: jazz_f, user_password: ^^7QBAvuVKcXqkXOyQ38$$, user_register_time: 26-07-2020_22:30:26, user_role: customer, user_email: jazz_f@gmail.com, user_mobile: 0445674567
+user_id: u_0000000005, user_name: andrea_v, user_password: ^^NaCXQht4ePsrgyrwZyhF6$$, user_register_time: 21-09-2020_23:03:16, user_role: customer, user_email: andrea_v@gmail.com, user_mobile: 0456785678
+user_id: u_0000000006, user_name: hans_j, user_password: ^^ZEEjZlSJfda47c5$$, user_register_time: 30-12-2020_11:40:24, user_role: customer, user_email: hans_j@gmail.com, user_mobile: 0467896789
+user_id: u_0000000007, user_name: sam_j, user_password: ^^WYMzue8ya45thb6$$, user_register_time: 13-02-2021_20:22:16, user_role: customer, user_email: sam_j@gmail.com, user_mobile: 0478907890
+user_id: u_0000000008, user_name: mike_l, user_password: ^^6TBBTar0dnugRhe6Nr721$$, user_register_time: 20-03-2021_08:31:11, user_role: customer, user_email: mike_l@gmail.com, user_mobile: 0312341234
+user_id: u_0000000009, user_name: luke_s, user_password: ^^7uYOWuuLcq0kFoyuB1$$, user_register_time: 03-05-2021_00:52:08, user_role: customer, user_email: luke_s@gmail.com, user_mobile: 0323452345
+user_id: u_0000000010, user_name: patches_a, user_password: ^^sCGDslm5uHzeDD9$$, user_register_time: 02-08-2021_18:17:00, user_role: customer, user_email: patches_a@gmail.com, user_mobile: 0334563456

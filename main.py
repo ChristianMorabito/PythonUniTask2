@@ -140,13 +140,17 @@ def customer_control(user):
                     show("data/orders.txt", None,
                          OrderOperation.get_order_list, user.user_id)
                 elif choice == 5:  # generate consumption figure
-                    IOInterface.print_message("Generating consumption chart to ./data/figure folder...")
-                    if not OrderOperation.generate_single_customer_consumption_figure(user.user_id):
-                        IOInterface.print_error_message(
-                            "operation_order.generate_single_customer_consumption_figure()",
-                            "Error generating chart.")
+                    if os.path.getsize("data/orders.txt") == 0 or os.path.getsize("data/products.txt") == 0:
+                        IOInterface.print_message("Incomplete data! Unable to generate figures until:\n"
+                                                  "users.txt, orders.txt, & products.txt have data.")
                     else:
-                        IOInterface.print_message("Chart has been generated.")
+                        IOInterface.print_message("Generating consumption chart to ./data/figure folder...")
+                        if not OrderOperation.generate_single_customer_consumption_figure(user.user_id):
+                            IOInterface.print_error_message(
+                                "operation_order.generate_single_customer_consumption_figure()",
+                                "Error generating chart.")
+                        else:
+                            IOInterface.print_message("Chart has been generated.")
 
                 else:  # log out
                     logged_in = False
@@ -230,13 +234,13 @@ def show(path, pages_amount, get_list_function, keyword=None):
             customer_order_list = OrderOperation.get_order_list(customer_id=keyword)
             IOInterface.show_list(list_type=customer_order_list)
             IOInterface.print_message("\nYou have made " + str(len(customer_order_list)) +
-                                      (" orders" if len(customer_order_list) == 1 else " order") + " so far.")
+                                      (" order" if len(customer_order_list) == 1 else " orders") + " so far.")
         elif keyword.isdigit():
             if len(keyword) < 8:
                 IOInterface.print_message(f"Searching through IDs...\n")
                 id_list = ProductOperation.get_product_by_id(keyword)
                 IOInterface.show_list(list_type=id_list)
-                IOInterface.print_message("\nID search exceeded limit! Try a longer number" if len(id_list) == 50
+                IOInterface.print_message("\nID search exceeded limit! Try a larger number." if len(id_list) == 100
                                           else f"\n{len(id_list)} instances of {keyword} found.")
             else:
                 IOInterface.print_message("ID input is too long. largest ID is 7 digits long.")
@@ -308,27 +312,31 @@ def admin_control():
                     else:
                         IOInterface.print_message("Test data has been generated.")
                 elif choice == 6:  # generate all statistical figures
-                    IOInterface.print_message("Generating statistics to ./data/figure folder...")
-                    # generate_data is a list of tuples containing (generate_graph_function, error_msg_string)
-                    generate_data = [(ProductOperation.generate_likes_count_figure,
-                                      "operation_product.generate_likes_count_figure()"),
-                                     (ProductOperation.generate_category_figure,
-                                      "operation_product.generate_category_figure()"),
-                                     (ProductOperation.generate_discount_figure,
-                                      "operation_product.generate_discount_figure()"),
-                                     (ProductOperation.generate_discount_likes_count_figure,
-                                      "operation_product.generate_discount_likes_count_figure()"),
-                                     (OrderOperation.generate_all_customers_consumption_figure,
-                                      "operation_product.generate_all_customers_consumption_figure()"),
-                                     (OrderOperation.generate_all_top_10_best_sellers_figure,
-                                      "operation_order.generate_all_top_10_best_sellers_figure()")]
-                    function_failed = False
-                    for function, err_msg in generate_data:
-                        if not function():
-                            IOInterface.print_error_message(err_msg, "Data generation failed.")
-                            function_failed = True
-                    IOInterface.print_message("All stats. have been generated." if not function_failed else
-                                              "Due to error, some stat/s or all stats have NOT been generated.")
+                    if os.path.getsize("data/orders.txt") == 0 or os.path.getsize("data/products.txt") == 0:
+                        IOInterface.print_message("Incomplete data! Unable to generate figures until:\n"
+                                                  "users.txt, orders.txt, & products.txt have data.")
+                    else:
+                        IOInterface.print_message("Generating statistics to ./data/figure folder...")
+                        # generate_data is a list of tuples containing (generate_graph_function, error_msg_string)
+                        generate_data = [(ProductOperation.generate_likes_count_figure,
+                                          "operation_product.generate_likes_count_figure()"),
+                                         (ProductOperation.generate_category_figure,
+                                          "operation_product.generate_category_figure()"),
+                                         (ProductOperation.generate_discount_figure,
+                                          "operation_product.generate_discount_figure()"),
+                                         (ProductOperation.generate_discount_likes_count_figure,
+                                          "operation_product.generate_discount_likes_count_figure()"),
+                                         (OrderOperation.generate_all_customers_consumption_figure,
+                                          "operation_product.generate_all_customers_consumption_figure()"),
+                                         (OrderOperation.generate_all_top_10_best_sellers_figure,
+                                          "operation_order.generate_all_top_10_best_sellers_figure()")]
+                        function_failed = False
+                        for function, err_msg in generate_data:
+                            if not function():
+                                IOInterface.print_error_message(err_msg, "Data generation failed.")
+                                function_failed = True
+                        IOInterface.print_message("All stats. have been generated." if not function_failed else
+                                                  "Due to error, some stat/s or all stats have NOT been generated.")
                 elif choice == 7:  # delete all data
                     if (CustomerOperation.delete_all_customers() and
                             OrderOperation.delete_all_orders() and

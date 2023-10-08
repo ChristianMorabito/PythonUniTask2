@@ -6,8 +6,8 @@ Last modified: 8/10/23
 GitHub Link:   https://github.com/ChristianMorabito/PythonUniTask2
 
 This program is a simple e-commerce system which allows customers to log in & perform shopping
-operations like purchasing products, viewing order history & showing consumption reports.
-This program is for an assessment at Monash University, ITO4133: Intro. to Python
+operations like purchasing, viewing order history & showing consumption reports.
+Created to be assessed at Monash University, ITO4133: Intro. to Python
 """
 
 import os
